@@ -1,0 +1,225 @@
+/* Used for top bar selector */
+.tabs
+{
+	width: 100%;
+	height: 50px;
+	background-color: lightblue;
+}
+
+/* Bar switching on top bar selector */
+.abutton {
+	-webkit-appearance: button;
+	-moz-appearance: button;
+	appearance: button;
+	float: right;
+	margin: 4px;
+	margin-right: 10px;
+
+	-moz-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	-webkit-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	box-shadow:inset 0px -3px 7px 0px #29bbff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #2dabf9), color-stop(1, #0688fa));
+	background:-moz-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-webkit-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-o-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-ms-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#2dabf9', endColorstr='#0688fa',GradientType=0);
+	background-color:#2dabf9;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	border:1px solid #0b0e07;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	padding:9px 23px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #263666;
+}
+.abutton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0688fa), color-stop(1, #2dabf9));
+	background:-moz-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-webkit-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-o-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-ms-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0688fa', endColorstr='#2dabf9',GradientType=0);
+	background-color:#0688fa;
+}
+.abutton:active {
+	position:relative;
+	top:1px;
+}
+
+
+/* Greeting message div, username in message and the emoticons div  */
+.greeting
+{
+	margin-left: 28%;
+	margin-top: 70px;
+	font-size: 32px;
+	width: 800px;
+}
+.username
+{
+	font-size: 32px;
+	width: 150px;
+	text-align: center;
+}
+.emoticons_space
+{
+	margin-left: 20%;
+	margin-top: 70px;
+	width: 800px;
+}
+
+/* Images shown in main screen */
+.happy_image
+{
+	width: 200px; 
+	height: 160px; 
+    background-image: url('/images/happy.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+	float: left;
+}
+.happy_image:hover
+{
+    background-image:url('/images/happy_lighter.png');
+	cursor: pointer;
+}
+
+.sad_image
+{
+	width: 200px; 
+	height: 160px; 
+    background-image: url('/images/sad.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+	overflow: hidden;
+	float: left;
+}
+.sad_image:hover
+{
+    background-image:url('/images/sad_lighter.png');
+	cursor: pointer;
+}
+
+.chill_image
+{
+	width: 200px; 
+	height: 160px; 
+    background-image: url('/images/chill.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+	overflow: hidden;
+	float: left;
+}
+.chill_image:hover
+{
+    background-image:url('/images/chill_lighter.png');
+	cursor: pointer;
+}
+
+.angry_image
+{
+	width: 200px; 
+	height: 160px; 
+    background-image: url('/images/angry.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+	overflow: hidden;
+	float: left;
+}
+.angry_image:hover
+{
+    background-image:url('/images/angry_lighter.png');
+	cursor: pointer;
+}
+
+
+/* Grid - outern div */
+.data_display
+{
+	margin-left: 250px;
+	margin-top: 50px;
+	font-size: 28px;
+}
+
+/* Table layout */
+table
+{
+	width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+	margin-top: 70px;
+	background: #C0C0C0
+}
+th
+{
+	text-align: center;
+	border-left: 2px solid #4EC3F0;
+	border-top: 2px solid #4EC3F0;
+	border-bottom: 2px solid #4EC3F0;
+	border-right: 2px solid #4EC3F0;
+}
+td
+{
+	padding: 10px;
+	text-align: center;
+	border-left: 2px solid #4EC3F0;
+	border-top: 2px solid #4EC3F0;
+	border-bottom: 2px solid #4EC3F0;
+	border-right: 2px solid #4EC3F0;
+}
+
+/*Table format in View data tab*/
+.th_single_border, .td_single_border
+{
+	border: none;
+}
+.th_double_border, .td_double_border
+{
+	border-left: 2px solid #4EC3F0;
+	border-top: 2px solid #4EC3F0;
+	border-bottom: 2px solid #4EC3F0;
+	border-right: 8px double #4EC3F0;
+}
+.th_double_border, .th_single_border
+{
+	font-size: 16px;
+}
+.td_double_border, .td_single_border
+{
+	font-size: 12px;
+}
+
+/*calendars placed above table in View Data tab*/
+.calendars_area
+{
+	width: 100%;
+	heighT: 40px;
+	margin-top: 40px;
+	margin-left: 100px;
+	margin-bottom: -30px;
+}
+.calendars, .filter_moods
+{
+	float: left; 
+	margin-right: 20px;
+}
+div.ui-datepicker
+{
+	font-size: 14px;
+}
+.ui-datepickerth
+{
+	font-size: 16px;
+}
+.filter_moods
+{
+	width: 60px;
+}

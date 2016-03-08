@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'sinatra'
+gem 'sinatra/cookies'
+gem 'json'
+gem 'trinidad', :require => nil
