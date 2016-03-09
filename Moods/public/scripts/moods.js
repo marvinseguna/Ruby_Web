@@ -30,3 +30,11 @@ function AcceptInput( mood ) {
 			});
 	}
 }
+
+function changeButtonMoods() {
+	var upperTab = document.getElementById("upperTab");
+	if( upperTab != null ) {
+		document.getElementById("upperTab").innerHTML = 
+			"<a href=\"#/dataview\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"History\"><img src=\"/images/time_machine_shaped.png\" width=\"40\" height=\"40\" alt=\"submit\" /></a>";
+	}
+}

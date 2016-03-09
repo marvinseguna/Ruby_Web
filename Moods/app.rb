@@ -4,6 +4,8 @@ require 'sinatra/cookies'
 require 'helper'
 require 'json'
 
+set :port, 8080
+
 before do
 	@users = []
 end

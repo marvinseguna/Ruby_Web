@@ -33,12 +33,13 @@ def get_moods( users, start_date )
 	moods
 end
 
-def create_enty_and_file( username )
-	File.open( 'public/data.txt', 'a+' ) { |f| f.write username }
+def create_entry_and_file( username )
+	File.open( 'public/data.txt', 'a+' ) { |f| f.write "\n#{username}" }
 	File.new( "public/#{username}.txt", "w+" )
 end
 
 def insert_entry( username, mood )
+	puts 'kekbur'
 	File.open( "public/#{username}.txt", 'a+' ) { |f| 
 		time = Time.now
 		f.write "\n#{time.strftime("%Y%m%d")},#{time.strftime("%H%M")},#{mood[ 0 ]}"

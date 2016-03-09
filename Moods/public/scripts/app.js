@@ -18,10 +18,13 @@ app.config([ '$routeProvider', function ( $routeProvider ) {
 
 //Controllers for each page
 app.controller( 'MoodController', function () {
+	changeButtonMoods();
+	
 	appViewModel = new AppViewModel();
 	ko.applyBindings( appViewModel );
 });
 app.controller( 'DataViewController', function () {
+	changeButtonHistory();
 	initCalendars();
 	
 	var currentDate = new Date();
