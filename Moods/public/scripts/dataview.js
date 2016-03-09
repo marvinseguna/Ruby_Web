@@ -120,9 +120,9 @@ function FilterMoods() {
 }
 
 function changeButtonHistory() {
-	var upperTab = document.getElementById("upperTab");
-	if( upperTab != null ) {
-		document.getElementById("upperTab").innerHTML = 
-			"<a href=\"#/\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"Moods\"><img src=\"/images/logo.png\" width=\"40\" height=\"40\" alt=\"submit\" /></a>";
-	}
+	var upperTab = document.getElementById( "upperTabDataView" );
+
+	document.getElementById( "upperTabDataView" ).innerHTML = 
+		"<a href=\"#/\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"Moods\"><img src=\"/images/logo.png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
+	
 }

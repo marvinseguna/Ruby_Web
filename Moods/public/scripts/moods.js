@@ -1,10 +1,14 @@
 function AppViewModel() {
 	var self = this;
-	this.username = ko.observable( "Enter name" ); 
+	this.username = ko.observable( "" ); 
 	
 	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
-		var user = cookieUser.previous_user;
-		self.username( user ); 
+		if( cookieUser.previous_user == '' ) {
+			self.username( "Enter name" ); 
+		}
+		else {
+			self.username( cookieUser.previous_user ); 
+		}
     }); 
 	
 	$.getJSON( "/GetAllUsers", function( allUsers ) {
@@ -32,9 +36,17 @@ function AcceptInput( mood ) {
 }
 
 function changeButtonMoods() {
-	var upperTab = document.getElementById("upperTab");
+	var upperTab = document.getElementById( "upperTabMoodChoice" );
 	if( upperTab != null ) {
-		document.getElementById("upperTab").innerHTML = 
+		document.getElementById( "upperTabMoodChoice" ).innerHTML = 
 			"<a href=\"#/dataview\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"History\"><img src=\"/images/time_machine_shaped.png\" width=\"40\" height=\"40\" alt=\"submit\" /></a>";
 	}
+}
+
+function changeUsername() {
+	var self = getAppViewModel();
+	
+	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
+		self.username( cookieUser.previous_user );
+    }); 
 }

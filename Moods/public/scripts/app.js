@@ -18,17 +18,20 @@ app.config([ '$routeProvider', function ( $routeProvider ) {
 
 //Controllers for each page
 app.controller( 'MoodController', function () {
-	changeButtonMoods();
+	changeUsername();
 	
-	appViewModel = new AppViewModel();
-	ko.applyBindings( appViewModel );
+	if( appViewModel == null ) {
+		appViewModel = new AppViewModel();
+		ko.applyBindings( appViewModel );
+	}
+	changeButtonMoods();
 });
 app.controller( 'DataViewController', function () {
-	changeButtonHistory();
 	initCalendars();
 	
 	var currentDate = new Date();
 	var fromDate = new Date();
 	fromDate.setDate( currentDate.getDate() - 6 );		//1 week
 	fillGrid( fromDate, currentDate );
+	changeButtonHistory();
 });

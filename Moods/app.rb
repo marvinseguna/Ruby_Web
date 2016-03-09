@@ -8,6 +8,7 @@ set :port, 8080
 
 before do
 	@users = []
+	init
 end
 
 get "/" do
@@ -28,7 +29,7 @@ end
 get "/SaveMood" do
 	username = params[ 'username' ]
 	mood = params[ 'mood' ]
-
+	puts username
 	cookies[ :name ] = username
 	@users = get_users		if @users.empty?
 	

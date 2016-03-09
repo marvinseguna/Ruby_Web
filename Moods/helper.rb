@@ -1,5 +1,5 @@
 def get_users
-	File.read( 'public/data.txt' ).split
+	File.read( 'public/data.txt' ).split( "\n" )
 end
 
 def fill_user_data( user_data, prev_data, moods_info, start_date )
@@ -34,14 +34,17 @@ def get_moods( users, start_date )
 end
 
 def create_entry_and_file( username )
-	File.open( 'public/data.txt', 'a+' ) { |f| f.write "\n#{username}" }
+	File.open( 'public/data.txt', 'a+' ) { |f| f.puts username }
 	File.new( "public/#{username}.txt", "w+" )
 end
 
 def insert_entry( username, mood )
-	puts 'kekbur'
 	File.open( "public/#{username}.txt", 'a+' ) { |f| 
 		time = Time.now
-		f.write "\n#{time.strftime("%Y%m%d")},#{time.strftime("%H%M")},#{mood[ 0 ]}"
+		f.puts "#{time.strftime("%Y%m%d")},#{time.strftime("%H%M")},#{mood[ 0 ]}"
 	}
+end
+
+def init
+	File.open( 'public/data.txt', 'a+' ){}
 end
