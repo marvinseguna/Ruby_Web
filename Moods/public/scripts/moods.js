@@ -1,6 +1,6 @@
 function AppViewModel() {
 	var self = this;
-	this.username = ko.observable( "" ); 
+	self.username = ko.observable( '' ); 
 	
 	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
 		if( cookieUser.previous_user == '' ) {
@@ -19,7 +19,9 @@ function AppViewModel() {
 }
 
 function AcceptInput( mood ) {
-	var username = getAppViewModel().username();
+	var self = getAppViewModel();
+	var username = self.username();
+	alert(username);
 	if( username == '' ) { //If username is not provided -> alert
 		alert( 'Kindly provide username before selecting your mood!' );
 	}

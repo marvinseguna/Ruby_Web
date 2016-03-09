@@ -1,5 +1,5 @@
 def get_users
-	File.read( 'public/data.txt' ).split( "\n" )
+	File.read( 'db/data.dat' ).split( "\n" )
 end
 
 def fill_user_data( user_data, prev_data, moods_info, start_date )
@@ -25,7 +25,7 @@ def get_moods( users, start_date )
 		user_data = []
 		prev_data = ""
 		
-		File.read( "public/#{user}.txt" ).split.each{ |moods_info|
+		File.read( "db/#{user}.dat" ).split.each{ |moods_info|
 			prev_data = fill_user_data user_data, prev_data, moods_info, start_date
 		}
 		moods[ user ] = user_data
@@ -34,17 +34,17 @@ def get_moods( users, start_date )
 end
 
 def create_entry_and_file( username )
-	File.open( 'public/data.txt', 'a+' ) { |f| f.puts username }
-	File.new( "public/#{username}.txt", "w+" )
+	File.open( 'db/data.dat', 'a+' ) { |f| f.puts username }
+	File.new( "db/#{username}.dat", "w+" )
 end
 
 def insert_entry( username, mood )
-	File.open( "public/#{username}.txt", 'a+' ) { |f| 
+	File.open( "db/#{username}.dat", 'a+' ) { |f| 
 		time = Time.now
 		f.puts "#{time.strftime("%Y%m%d")},#{time.strftime("%H%M")},#{mood[ 0 ]}"
 	}
 end
 
 def init
-	File.open( 'public/data.txt', 'a+' ){}
+	File.open( 'db/data.dat', 'a+' ){}
 end

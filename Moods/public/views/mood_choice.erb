@@ -10,10 +10,10 @@
 			<p>How are you feeling today <input id="user" class="username" data-bind="value: username"/>?</p>
 		</div>
 		<div class="emoticons_space">
-			<div class="happy_image" onclick="AcceptInput('happy')" height="150" width="200"></div> <!-- to bind image name => #data-bind="attr:{ src: '/images/' + mood_happy }" -->
-			<div class="chill_image" onclick="AcceptInput('chill')" height="150" width="200"></div>
-			<div class="sad_image" onclick="AcceptInput('sad')" height="150" width="200"></div>
-			<div class="angry_image" onclick="AcceptInput('angry')" height="150" width="200"></div>
+			<div class="happy_image" onclick="AcceptInput('happy')" height="150" width="200" data-toggle="tooltip" title="Happy"></div> <!-- to bind image name => #data-bind="attr:{ src: '/images/' + mood_happy }" -->
+			<div class="chill_image" onclick="AcceptInput('chill')" height="150" width="200" data-toggle="tooltip" title="Chill"></div>
+			<div class="sad_image" onclick="AcceptInput('sad')" height="150" width="200" data-toggle="tooltip" title="Sad"></div>
+			<div class="angry_image" onclick="AcceptInput('angry')" height="150" width="200" data-toggle="tooltip" title="Angry"></div>
 		</div>
 	</body>
 </html>

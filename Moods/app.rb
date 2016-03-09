@@ -39,7 +39,7 @@ get "/SaveMood" do
 	end
 	
 	insert_entry username, mood
-	JSON.generate({ :message => 'Thanks!' })
+	JSON.generate({ :message => "Thanks #{username}!" })
 end
 
 get "/GetMoodData" do
