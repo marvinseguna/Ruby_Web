@@ -20,13 +20,13 @@ function AppViewModel() {
 
 function AcceptInput( mood ) {
 	var self = getAppViewModel();
-	var username = self.username();
-	alert(username);
-	if( username == '' ) { //If username is not provided -> alert
+	self.username( document.getElementById( "user" ).value );
+	
+	if( self.username() == '' ) { //If username is not provided -> alert
 		alert( 'Kindly provide username before selecting your mood!' );
 	}
 	else { //else, add user in cookie & file system
-		var data = { username : username, mood : mood }
+		var data = { username : self.username(), mood : mood }
 		$.getJSON( "/SaveMood", data )
 			.done( function( state ) {
 				alert( state.message );
