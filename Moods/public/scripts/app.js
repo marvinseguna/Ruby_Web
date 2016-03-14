@@ -18,12 +18,11 @@ app.config([ '$routeProvider', function ( $routeProvider ) {
 
 //Controllers for each page
 app.controller( 'MoodController', function () {
-	changeUsername();
-	
 	if( appViewModel == null ) {
 		appViewModel = new AppViewModel();
 		ko.applyBindings( appViewModel );
 	}
+	changeUsername();
 	changeButtonMoods();
 });
 app.controller( 'DataViewController', function () {

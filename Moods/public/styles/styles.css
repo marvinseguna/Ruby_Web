@@ -26,6 +26,9 @@
 	font-size: 32px;
 	width: 300px;
 	text-align: center;
+	border-top: none;
+	border-right: none;
+	border-left: none;
 }
 .emoticons_space
 {
@@ -46,7 +49,7 @@
 }
 .happy_image:hover
 {
-    background-image:url('/images/happy_lighter.png');
+    opacity: 0.5;
 	cursor: pointer;
 }
 
@@ -62,7 +65,7 @@
 }
 .sad_image:hover
 {
-    background-image:url('/images/sad_lighter.png');
+    opacity: 0.5;
 	cursor: pointer;
 }
 
@@ -78,7 +81,7 @@
 }
 .chill_image:hover
 {
-    background-image:url('/images/chill_lighter.png');
+    opacity: 0.5;
 	cursor: pointer;
 }
 
@@ -94,7 +97,7 @@
 }
 .angry_image:hover
 {
-    background-image:url('/images/angry_lighter.png');
+    opacity: 0.5;
 	cursor: pointer;
 }
 
