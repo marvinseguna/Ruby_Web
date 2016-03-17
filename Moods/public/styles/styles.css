@@ -185,3 +185,13 @@ div.ui-datepicker
 	width: 60px;
 }
 
+.alertFader {
+	padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;  
+	display: none;
+	position: absolute;
+	margin-left: 45%;
+	font-size: 26px;
+}

@@ -6,8 +6,10 @@
 		<div id="upperTabMoodChoice" class="tabs">
 		</div>
 		
+		<div id="alertDiv" class="alertFader">Success!</div>
+		
 		<div class="greeting">
-			<p>How are you feeling today <input id="user" class="username" onClick="this.setSelectionRange( 0, this.value.length )" data-bind="value: username"/>?</p>
+			<p>How are you feeling today <input id="user" class="username" onClick="this.setSelectionRange( 0, this.value.length )" data-bind="textInput: userId"/>?</p>
 		</div>
 		<div class="emoticons_space">
 			<div class="happy_image" onclick="AcceptInput('happy')" height="150" width="200" data-toggle="tooltip" title="Happy"></div> <!-- to bind image name => #data-bind="attr:{ src: '/images/' + mood_happy }" -->

@@ -12,7 +12,7 @@ function getFullDate( date ) {
 	return fullDate;
 }
 
-function setTableHeaders( dateHeaders, dateFrom, dayDifference ) {
+function setTableHeaders( dateHeaders, dateFrom, dayDifference ) { //setting dates on top of table 
 	var shownDates = {};
 	var tableColumnHeaders = '';
 	for( var i = 0; i < dayDifference; i++ ) {		
@@ -29,7 +29,7 @@ function setTableHeaders( dateHeaders, dateFrom, dayDifference ) {
 	dateHeaders.innerHTML = "<th class=\"th_single_border\"></th>" + tableColumnHeaders;
 	return shownDates;
 }
-function setTimeHeaders( timeHeaders, dayDifference ) {
+function setTimeHeaders( timeHeaders, dayDifference ) { //setitng the times beneath the dates
 	timeHeaders.innerHTML = "<td class=\"td_single_border\"></td>";
 	for( var i = 0; i < dayDifference; i++ ) {
 		timeHeaders.innerHTML += "<td>09:00</td><td>13:00</td><td class=\"td_double_border\">17:00</td>";
@@ -63,7 +63,7 @@ function setMoodRows( table, moodData, shownDates, dayDifference ) {
 	for( var key in moodData ) {
 		var nameRow = table.insertRow( counter );
 		counter++;
-		nameRow.innerHTML = "<td>" + key + "</td>";
+		nameRow.innerHTML = "<th>" + key + "</th>";
 		var currentColumn = 0;
 		var doubleLines = 1;
 	

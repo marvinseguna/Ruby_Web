@@ -1,38 +1,18 @@
-function AppViewModel() {
-	var self = this;
-	self.username = ko.observable( '' ); 
-	
-	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
-		if( cookieUser.previous_user == '' ) {
-			self.username( "Enter name" ); 
-		}
-		else {
-			self.username( cookieUser.previous_user ); 
-		}
-    }); 
-	
-	$.getJSON( "/GetAllUsers", function( allUsers ) {
-		$( "#user" ).autocomplete({ 
-			source: allUsers.all_users
-		});
-	});
-}
+var appViewModel = null;
 
 function AcceptInput( mood ) {
-	var self = getAppViewModel();
-	self.username( document.getElementById( "user" ).value );
-	
-	if( self.username() == '' ) { //If username is not provided -> alert
+	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
+	if( appViewModel.userId() == '' ) { //If username is not provided -> alert
 		alert( 'Kindly provide username before selecting your mood!' );
 	}
 	else { //else, add user in cookie & file system
-		var data = { username : self.username(), mood : mood }
+		var data = { username : appViewModel.userId(), mood : mood }
 		$.getJSON( "/SaveMood", data )
 			.done( function( state ) {
-				alert( state.message );
+				$( "#alertDiv" ).html( state.message  ).fadeIn( 300 ).delay( 1500 ).fadeOut( 400 );
 			})
 			.fail( function( state ) {
-				alert( state.message );
+				$( "#alertDiv" ).html( state.message  ).fadeIn( 300 ).delay( 1500 ).fadeOut( 400 );
 			});
 	}
 }
@@ -45,10 +25,28 @@ function changeButtonMoods() {
 	}
 }
 
-function changeUsername() {
-	var self = getAppViewModel();
+function setAppViewModel() {
+	if( appViewModel != null ) { //removing binding as page was reloaded!!!
+		var element = $('#user')[ 0 ]; 
+		ko.cleanNode( element ); //Keeping same binding will still keep observable but does not update UI!!!!!
+	}
+	appViewModel = {
+		userId: ko.observable( '' )
+	};
+	ko.applyBindings( appViewModel, document.getElementById( 'user' ));
 	
 	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
-		self.username( cookieUser.previous_user );
+		if( cookieUser.previous_user == '' ) {
+			appViewModel.userId( "Enter name" ); 
+		}
+		else {
+			appViewModel.userId( cookieUser.previous_user ); 
+		}
     }); 
+	
+	$.getJSON( "/GetAllUsers", function( allUsers ) {
+		$( "#user" ).autocomplete({ 
+			source: allUsers.all_users
+		});
+	});
 }

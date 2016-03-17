@@ -4,10 +4,6 @@ var app = angular.module( 'moodsApp', [
 ]);
 
 //To access variable from moods.js
-var appViewModel = null;
-function getAppViewModel() {
-	return appViewModel;
-}
 
 //Page routing
 app.config([ '$routeProvider', function ( $routeProvider ) {
@@ -18,11 +14,7 @@ app.config([ '$routeProvider', function ( $routeProvider ) {
 
 //Controllers for each page
 app.controller( 'MoodController', function () {
-	if( appViewModel == null ) {
-		appViewModel = new AppViewModel();
-		ko.applyBindings( appViewModel );
-	}
-	changeUsername();
+	setAppViewModel()
 	changeButtonMoods();
 });
 app.controller( 'DataViewController', function () {
