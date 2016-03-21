@@ -9,10 +9,14 @@
 		<div id="calendarContainer" class="calendars_area">
 			<p class="calendars">From: <input type="text" id="datepickerFrom"></p>
 			<p class="calendars">To: <input type="text" id="datepickerTo"></p>
-			<button class="filter_moods" onclick="FilterMoods()">Filter</button>
+			<button class="filter_moods" onclick="filterMoods()">Filter</button>
 		</div>
 		
-		<table id="moodTable">
-		</table>
+		<div id="tables" class="tablesContainer">
+			<table id="nameTable" style="display: inline-block;">
+			</table>
+			<table id="moodTable" style="display: inline-block; width: 1067px; overflow-x: scroll; overflow-y: visible;">
+			</table>
+		</div>
 	</body>
 </html>

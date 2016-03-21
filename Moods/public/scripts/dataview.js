@@ -1,7 +1,7 @@
-function initCalendars() {
-	$( "#datepickerTo" ).datepicker();
-	$( "#datepickerFrom" ).datepicker();
-}
+var styleTableHeadersDoubleBorder = "class=\"tableTitles th_double_border\"";
+var styleTableHeaders = "class=\"tableTitles\"";
+var styleTableDataDoubleBorder = "class=\"tableData td_double_border\"";
+var styleTableData = "class=\"tableData\"";
 
 function getFullDate( date ) {
 	var day = ( "0" + ( date.getDate() )).slice( -2 );
@@ -17,41 +17,41 @@ function setTableHeaders( dateHeaders, dateFrom, dayDifference ) { //setting dat
 	var tableColumnHeaders = '';
 	for( var i = 0; i < dayDifference; i++ ) {		
 		var fullDate = getFullDate( dateFrom );
-		tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" class=\"th_double_border\">" + fullDate + "</th>";
+		tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" " + styleTableHeadersDoubleBorder + ">" + fullDate + "</th>"; //class=\"th_double_border\"
 
 		shownDates[ fullDate ] = i * 3;
 		dateFrom.setDate( dateFrom.getDate() + 1 );
 	}
 	var fullDate = getFullDate( dateFrom );
-	tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" style=\"font-size:16px;\">" + fullDate + "</th>";
+	tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" " + styleTableHeaders + " style=\"border-right: 2px solid #4EC3F0;\">" + fullDate + "</th>";
 	shownDates[ fullDate ] = i * 3;
 	
-	dateHeaders.innerHTML = "<th class=\"th_single_border\"></th>" + tableColumnHeaders;
+	dateHeaders.innerHTML = tableColumnHeaders; //class=\"th_single_border\", "<th></th>" + 
 	return shownDates;
 }
-function setTimeHeaders( timeHeaders, dayDifference ) { //setitng the times beneath the dates
-	timeHeaders.innerHTML = "<td class=\"td_single_border\"></td>";
+function setTimeHeaders( timeHeaders, dayDifference ) { //setting the times beneath the dates
+	//timeHeaders.innerHTML = "<td style=\"width: 150px;\"></td>"; //class=\"td_single_border\"
 	for( var i = 0; i < dayDifference; i++ ) {
-		timeHeaders.innerHTML += "<td>09:00</td><td>13:00</td><td class=\"td_double_border\">17:00</td>";
+		timeHeaders.innerHTML += "<td " + styleTableData + ">09:00</td><td " + styleTableData + ">13:00</td><td " + styleTableDataDoubleBorder + ">17:00</td>"; //class=\"td_double_border\"
 	}
-	timeHeaders.innerHTML += "<td>09:00</td><td>13:00</td><td>17:00</td>";
+	timeHeaders.innerHTML += "<td " + styleTableData + ">09:00</td><td " + styleTableData + ">13:00</td><td " + styleTableData + ">17:00</td>";
 }
 function setMoodData( nameRow, currentColumn, doubleLines, maxColumns, mood ) {
 	if( currentColumn == (( 3 * doubleLines ) - 1 ) && currentColumn != maxColumns ) {
 		if( mood == '' ) {
-			nameRow.innerHTML += "<td class=\"td_double_border\"></td>";
+			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "></td>"; //class=\"td_double_border\"
 		}
 		else {
-			nameRow.innerHTML += "<td class=\"td_double_border\"><img src=\"/images/" + mood + ".png\"/></td>";
+			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "><img src=\"/images/" + mood + ".png\"/></td>"; //class=\"td_double_border\"
 		}
 		doubleLines++;
 	}
 	else {
 		if( mood == '' ) {
-			nameRow.innerHTML += "<td></td>";
+			nameRow.innerHTML += "<td " + styleTableData + "></td>";
 		}
 		else {
-			nameRow.innerHTML += "<td><img src=\"/images/" + mood + ".png\"/></td>";
+			nameRow.innerHTML += "<td " + styleTableData + "><img src=\"/images/" + mood + ".png\"/></td>";
 		}
 	}
 	return doubleLines;
@@ -62,8 +62,13 @@ function setMoodRows( table, moodData, shownDates, dayDifference ) {
 	var moods = { "h" : "happy_icon", "s" : "sad_icon", "a" : "angry_icon", "c" : "chill_icon" };
 	for( var key in moodData ) {
 		var nameRow = table.insertRow( counter );
+		
+		var nameTable = document.getElementById( "nameTable" );
+		var namingRow = nameTable.insertRow( counter );
+		namingRow.innerHTML = "<th " + styleTableHeaders + ">" + key + "</th>";
+		
 		counter++;
-		nameRow.innerHTML = "<th>" + key + "</th>";
+		
 		var currentColumn = 0;
 		var doubleLines = 1;
 	
@@ -100,10 +105,15 @@ function fillGrid( dateFrom, dateTo) { //default is 1-week
 		var dayDifference = Math.floor(( utc2 - utc1 ) / ( 1000 * 60 * 60 * 24 ));
 		
 		//Top dates
+		var nameTable = document.getElementById( "nameTable" );
+		var nameRow = nameTable.insertRow( 0 );
+		nameRow.innerHTML = "<th " + styleTableHeaders + "></th>";
 		shownDates = setTableHeaders( dateHeaders, dateFrom, dayDifference );
 		
 		//Top times
 		var timeHeaders = table.insertRow( 1 );
+		var nameRow = nameTable.insertRow( 1 );
+		nameRow.innerHTML = "<th " + styleTableHeaders + "></th>";
 		setTimeHeaders( timeHeaders, dayDifference );
 		
 		//Mood Data
@@ -111,11 +121,12 @@ function fillGrid( dateFrom, dateTo) { //default is 1-week
 	});
 }
 
-function FilterMoods() {
+function filterMoods() {
 	var dateFrom = $( "#datepickerFrom" ).datepicker( "getDate" );
 	var dateTo = $( "#datepickerTo" ).datepicker( "getDate" );
 	
 	document.getElementById( "moodTable" ).innerHTML = "";
+	document.getElementById( "nameTable" ).innerHTML = "";
 	fillGrid( dateFrom, dateTo );
 }
 
@@ -125,4 +136,9 @@ function changeButtonHistory() {
 	document.getElementById( "upperTabDataView" ).innerHTML = 
 		"<a href=\"#/\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"Moods\"><img src=\"/images/logo.png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
 	
+}
+
+function initCalendars() {
+	$( "#datepickerTo" ).datepicker();
+	$( "#datepickerFrom" ).datepicker();
 }
