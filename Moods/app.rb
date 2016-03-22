@@ -5,6 +5,7 @@ require 'helper'
 require 'json'
 
 set :port, 8080
+set :bind, '0.0.0.0'
 
 before do
 	@users = []
