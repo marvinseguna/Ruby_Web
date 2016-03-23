@@ -122,9 +122,9 @@
 {
 	text-align: center;
 	padding: 4px;
-	font-size: 20px;
+	font-size: 16px;
 	width: 150px;
-	height: 66px;
+	height: 52px;
 	border-left: 2px solid #4EC3F0;
 	border-top: 2px solid #4EC3F0;
 	border-bottom: 2px solid #4EC3F0;
@@ -132,9 +132,9 @@
 .tableData
 {
 	padding: 3px;
-	font-size: 16px;
+	font-size: 12px;
 	text-align: center;
-	height: 66px;
+	height: 52px;
 	border-left: 2px solid #4EC3F0;
 	border-top: 2px solid #4EC3F0;
 	border-bottom: 2px solid #4EC3F0;
@@ -151,7 +151,7 @@
 /*calendars placed above table in View Data tab*/
 .calendars_area
 {
-	width: 100%;
+	width: 800px;
 	heighT: 40px;
 	margin-top: 40px;
 	margin-left: 100px;

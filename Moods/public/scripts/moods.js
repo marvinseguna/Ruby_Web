@@ -9,10 +9,10 @@ function AcceptInput( mood ) {
 		var data = { username : appViewModel.userId(), mood : mood }
 		$.getJSON( "/SaveMood", data )
 			.done( function( state ) {
-				$( "#alertDiv" ).fadeIn( 300 ).delay( 6000 ).fadeOut( 6000 );
+				alert(state.message);
 			})
 			.fail( function( state ) {
-				$( "#alertDiv" ).fadeIn( 300 ).delay( 6000 ).fadeOut( 6000 );
+				alert(state.message);
 			});
 	}
 }

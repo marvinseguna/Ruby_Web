@@ -1,7 +1,8 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/cookies'
-require 'helper'
+require 'user_moods_helper'
+require 'messages_helper'
 require 'json'
 
 set :port, 8080
@@ -40,7 +41,11 @@ get "/SaveMood" do
 	end
 	
 	insert_entry username, mood
-	JSON.generate({ :message => "Thanks #{username}!" })
+	
+	@messages = load_messages		if @messages == nil
+	message = get_random_message( @messages )
+	
+	JSON.generate({ :message => message })
 end
 
 get "/GetMoodData" do
