@@ -175,14 +175,21 @@ div.ui-datepicker
 	width: 60px;
 }
 
-.alertFader {
+.inspirationMessage
+{
 	padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 4px;  
-	display: none;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;  
 	position: absolute;
 	margin-left: 15%;
 	font-size: 26px;
 	margin-top: 300px;
+	width: 1000px;
+	height: 800px;
+	text-align: center;
+}
+.inspirationAuthor
+{
+	font-style: italic;
 }

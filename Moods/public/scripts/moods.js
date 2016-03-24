@@ -1,4 +1,7 @@
 var appViewModel = null;
+//Inspirational message reset
+var inspMessage = "";
+var inspAuthor = "";
 
 function AcceptInput( mood ) {
 	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
@@ -8,8 +11,14 @@ function AcceptInput( mood ) {
 	else { //else, add user in cookie & file system
 		var data = { username : appViewModel.userId(), mood : mood }
 		$.getJSON( "/SaveMood", data )
-			.done( function( state ) {
-				alert(state.message);
+			.done( function( msg ) {
+				var message = msg.message.split( "-" )[ 0 ];
+				var author = msg.message.split( "-" )[ 1 ];
+				
+				inspMessage = message;
+				inspAuthor = author;
+				$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
+				$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
 			})
 			.fail( function( state ) {
 				alert(state.message);
@@ -26,10 +35,15 @@ function changeButtonMoods() {
 }
 
 function setAppViewModel() {
+	$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
+	$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
+	
 	if( appViewModel != null ) { //removing binding as page was reloaded!!!
 		var element = $('#user')[ 0 ]; 
 		ko.cleanNode( element ); //Keeping same binding will still keep observable but does not update UI!!!!!
 	}
+	
+	
 	appViewModel = {
 		userId: ko.observable( '' )
 	};
