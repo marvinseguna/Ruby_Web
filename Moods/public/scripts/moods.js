@@ -17,6 +17,8 @@ function AcceptInput( mood ) {
 				
 				inspMessage = message;
 				inspAuthor = author;
+				$( "#message" ).stop( true ).fadeTo( 100, 1 ); //resets animations and removes others in queue
+				$( "#author" ).stop( true ).fadeTo( 100, 1 );
 				$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
 				$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
 			})
@@ -27,14 +29,16 @@ function AcceptInput( mood ) {
 }
 
 function changeButtonMoods() {
-	var upperTab = document.getElementById( "upperTabMoodChoice" );
+	var upperTab = document.getElementById( "upperTabChoice" );
 	if( upperTab != null ) {
-		document.getElementById( "upperTabMoodChoice" ).innerHTML = 
+		document.getElementById( "upperTabChoice" ).innerHTML = 
 			"<a href=\"#/dataview\" class=\"buttonLinks\" data-toggle=\"tooltip\" title=\"History\"><img src=\"/images/time_machine_shaped.png\" width=\"40\" height=\"40\" alt=\"submit\" /></a>";
 	}
 }
 
 function setAppViewModel() {
+	$( "#message" ).stop( true ).fadeTo( 100, 1 );
+	$( "#author" ).stop( true ).fadeTo( 100, 1 );
 	$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
 	$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
 	
