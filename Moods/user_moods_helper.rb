@@ -7,7 +7,7 @@ def fill_user_data( user_data, prev_data, moods_info, start_date )
 	
 	if date >= start_date
 		hour = moods_info.split( ',' )[ 1 ].to_i
-		hour = ( "0900" if hour < 1300 ) || ( 1300 if hour < 1700) || 1700
+		hour = ( '0900' if hour < 1300 ) || ( '1300' if hour < 1700) || '1700'
 		
 		mood = moods_info.split( ',' ).last
 		
