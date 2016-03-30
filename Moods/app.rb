@@ -31,6 +31,9 @@ end
 get "/SaveMood" do
 	username = params[ 'username' ]
 	mood = params[ 'mood' ]
+	
+	return "" if username == nil || mood == nil || !(["angry", "chill", "happy", "sad"].member? mood)
+
 	puts username
 	cookies[ :name ] = username
 	@users = get_users		if @users.empty?
