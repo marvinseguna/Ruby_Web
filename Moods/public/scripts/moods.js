@@ -6,7 +6,7 @@ var inspAuthor = "";
 function AcceptInput( mood ) {
 	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
 	if( appViewModel.userId() == '' || appViewModel.userId() == 'Enter full name' ) { //If username is not provided -> alert
-		alert( 'Kindly provide username before selecting your mood!' );
+		alert( 'Kindly provide full name (e.g. Joe Smith) before selecting mood!' );
 	}
 	else { //else, add user in cookie & file system
 		var data = { username : appViewModel.userId(), mood : mood }
