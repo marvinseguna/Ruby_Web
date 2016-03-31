@@ -3,6 +3,7 @@ var app = angular.module( 'moodsApp', [
   'ngRoute'
 ]);
 var currPage = 0;
+checkSubmission(); 
 
 //To access variable from moods.js
 
@@ -33,3 +34,30 @@ app.controller( 'DataViewController', function () {
 app.controller( 'InfoViewController', function() {
 	setTabHandler( currPage );
 });
+
+//Notification logic
+function checkSubmission() {
+	//send request to server to check last submission time
+	
+	//set timeout only if the notification should not be shown
+	
+	//else, show notification
+}
+function notifyUser() {
+	var title;
+	var options;
+
+	title = 'Set your moods!';
+	options = {
+		body: 'You have 30minutes left to set your mood!',
+		tag: 'preset'
+	};
+
+	Notification.requestPermission( function() {
+		var notification = new Notification( title, options );
+		notification.onclick = function() {
+			window.open( '#/' );
+			notification.close();
+		}
+	});
+}

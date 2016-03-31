@@ -5,7 +5,7 @@ var inspAuthor = "";
 
 function AcceptInput( mood ) {
 	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
-	if( appViewModel.userId() == '' ) { //If username is not provided -> alert
+	if( appViewModel.userId() == '' || appViewModel.userId() == 'Enter full name' ) { //If username is not provided -> alert
 		alert( 'Kindly provide username before selecting your mood!' );
 	}
 	else { //else, add user in cookie & file system
@@ -37,10 +37,8 @@ function changeButtonMoods() {
 }
 
 function setAppViewModel() {
-	$( "#message" ).stop( true ).fadeTo( 100, 1 );
-	$( "#author" ).stop( true ).fadeTo( 100, 1 );
-	$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
-	$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
+	$( "#message" ).html( inspMessage ).fadeTo( 100, 0.4 );
+	$( "#author" ).html( inspAuthor ).fadeTo( 100, 0.4 );
 	
 	if( appViewModel != null ) { //removing binding as page was reloaded!!!
 		var element = $('#user')[ 0 ]; 
@@ -55,7 +53,7 @@ function setAppViewModel() {
 	
 	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
 		if( cookieUser.previous_user == '' ) {
-			appViewModel.userId( "Enter name" ); 
+			appViewModel.userId( "Enter full name" ); 
 		}
 		else {
 			appViewModel.userId( cookieUser.previous_user ); 

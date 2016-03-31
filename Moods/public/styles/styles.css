@@ -135,6 +135,10 @@
 	border-top: 2px solid #4EC3F0;
 	border-bottom: 2px solid #4EC3F0;
 }
+.gridNames
+{
+	text-align: right;
+}
 .tableData
 {
 	padding: 3px;
@@ -199,4 +203,33 @@ div.ui-datepicker
 {
 	font-style: italic;
 	font-size: 20px;
+}
+
+/* About-page */
+.image-left 
+{
+	float: left;
+	text-align: center;
+	margin: 1em;
+	margin-top: 1em;
+	margin-right: 1em;
+	margin-bottom: 1em;
+	margin-left: 1em;
+	font-size: 0.7em;
+}
+.entry-content
+{
+	padding-left: 30px;
+	padding-right: 30px;
+}
+p
+{
+	line-height: 24px;
+}
+body
+{
+	font-family: Baskerville, Georgia, 'Times New Roman', Times, serif;
+	color: #333;
+	font-size: 16px;
+	clear: both;
 }

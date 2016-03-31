@@ -1,5 +1,6 @@
 var styleTableHeadersDoubleBorder = "class=\"tableTitles th_double_border\"";
 var styleTableHeaders = "class=\"tableTitles\"";
+var styleTableHeadersGridName = "class=\"tableTitles gridNames\"";
 var styleTableDataDoubleBorder = "class=\"tableData td_double_border\"";
 var styleTableData = "class=\"tableData\"";
 
@@ -65,7 +66,7 @@ function setMoodRows( table, moodData, shownDates, dayDifference ) {
 		
 		var nameTable = document.getElementById( "nameTable" );
 		var namingRow = nameTable.insertRow( counter );
-		namingRow.innerHTML = "<th " + styleTableHeaders + ">" + key + "</th>";
+		namingRow.innerHTML = "<th " + styleTableHeadersGridName + ">" + key + "</th>";
 		
 		counter++;
 		
