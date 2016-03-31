@@ -40,6 +40,7 @@ function checkSubmission() {
 	//send request to server to check last submission time
 	
 	//set timeout only if the notification should not be shown
+	//setTimeout( checkSubmission, 6000 );
 	
 	//else, show notification
 }
