@@ -9,6 +9,7 @@ Niko-niko calendar, also known as smiley calendar or happiness index, is a **too
 
 Data from a Niko-niko calendar is a **huge opportunity for reflection**, and helps to retrieve feedback from changes like altering the environment immediately. Recent changes may indicate whether they were appreciated or not by each team member through the selected smileys. Niko-niko calendars are in many cases much faster when it comes to indicate problems. They are easily built and ready to use in almost no time.
 
+<a href="http://agiletrail.com/2011/09/12/how-to-track-the-teams-mood-with-a-niko-niko-calendar/">How to Track the Team’s Mood with a Niko-niko Calendar</a>
 
 
 ## Motivation
@@ -44,7 +45,7 @@ Reuben Sammut - Code review
 
 
 ## License
-Moods is released under MIT License <a href="https://opensource.org/licenses/mit-license.html"> (MIT)</a>
+Moods is released under MIT License <a href="https://opensource.org/licenses/mit-license.html">(MIT)</a>
 
 Copyright (c) 2016 Marvin Seguna
 
