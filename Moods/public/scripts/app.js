@@ -38,26 +38,28 @@ app.controller( 'InfoViewController', function() {
 //Notification logic
 function checkSubmission() {
 	//send request to server to check last submission time
-	
-	//set timeout only if the notification should not be shown
-	//setTimeout( checkSubmission, 6000 );
-	
-	//else, show notification
+	$.getJSON( "/GetLastSubmission", function( showNotification ) {
+		if( showNotification.show_it ) {
+			notifyUser();
+		}
+		setTimeout( checkSubmission, 900000 );
+	});
 }
 function notifyUser() {
 	var title;
 	var options;
 
-	title = 'Set your moods!';
+	title = 'Moods alert!';
 	options = {
-		body: 'You have 30minutes left to set your mood!',
+		body: 'Click here to visit the page to set your mood.',
 		tag: 'preset'
 	};
 
 	Notification.requestPermission( function() {
 		var notification = new Notification( title, options );
 		notification.onclick = function() {
-			window.open( '#/' );
+			var win = window.open( '#/', 'moods' );
+			win.focus();
 			notification.close();
 		}
 	});

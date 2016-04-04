@@ -18,23 +18,22 @@ get "/" do
 	erb :index
 end
 
-get "/GetPreviousUsername" do
+get "/GetPreviousUsername" do		# used in beginning to retrieve the name to place in the input box
 	user = ( cookies[ :name ] == nil ? "" : cookies[ :name ] )
 	JSON.generate({ :previous_user => user })
 end
 
-get "/GetAllUsers" do
+get "/GetAllUsers" do		#used in beginning for autocomplete of input box
 	@users = get_users		if @users.empty?
 	JSON.generate({ :all_users => @users })
 end
 
-get "/SaveMood" do
+get "/SaveMood" do		#used when user selects a mood
 	username = params[ 'username' ]
 	mood = params[ 'mood' ]
 	
 	return "" if username == nil || mood == nil || !(["angry", "chill", "happy", "sad"].member? mood)
 
-	puts username
 	cookies[ :name ] = username
 	@users = get_users		if @users.empty?
 	
@@ -51,8 +50,15 @@ get "/SaveMood" do
 	JSON.generate({ :message => message })
 end
 
-get "/GetMoodData" do
+get "/GetMoodData" do		#used to retrieve information on users to display in grid
 	@users = get_users		if @users.empty?
 	mood_data = get_moods @users, ( Date.today - 6 ).strftime( "%Y%m%d" ).to_i
 	JSON.generate( mood_data )
+end
+
+get "/GetLastSubmission" do		#used to check last submission of user for notification alert
+	return false		if cookies[ :name ] == nil
+	
+	show_it = check_last_submission cookies[ :name ]
+	JSON.generate({ :show_it => show_it })
 end
