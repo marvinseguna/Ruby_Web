@@ -19,7 +19,8 @@ This project was created by combining Sinatra with knockoutJS to create a basic 
 
 
 ## Installation
-
+* Download project as ZIP file and extract
+* Go to project folder, open cmd, and execute the following command: 'bundle exec jruby app.rb'
 
 
 ## References
