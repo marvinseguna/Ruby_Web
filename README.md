@@ -36,6 +36,7 @@ This project was created by combining Sinatra with knockoutJS to create a basic 
 ## Contributors
 
 Joseph Mizzi - Provided the idea (aim) to be able to create this project
+
 Reuben Sammut - Code review
 
 
