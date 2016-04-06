@@ -1,7 +1,7 @@
 var appViewModel = null;
 //Inspirational message reset
-var inspMessage = "";
-var inspAuthor = "";
+var motivationalMessage = "";
+var motivationalAuthor = "";
 
 function AcceptInput( mood ) {
 	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
@@ -12,18 +12,18 @@ function AcceptInput( mood ) {
 		var data = { username : appViewModel.userId(), mood : mood }
 		$.getJSON( "/SaveMood", data )
 			.done( function( msg ) {
-				var message = msg.message.split( "-" )[ 0 ];
-				var author = msg.message.split( "-" )[ 1 ];
+				var message = msg.message;
+				var author = msg.author;
 				
-				inspMessage = message;
-				inspAuthor = author;
+				motivationalMessage = message;
+				motivationalAuthor = author;
 				$( "#message" ).stop( true ).fadeTo( 100, 1 ); //resets animations and removes others in queue
 				$( "#author" ).stop( true ).fadeTo( 100, 1 );
-				$( "#message" ).html( inspMessage ).fadeTo( 60000, 0.4 );
-				$( "#author" ).html( inspAuthor ).fadeTo( 60000, 0.4 );
+				$( "#message" ).html( motivationalMessage ).fadeTo( 60000, 0.4 );
+				$( "#author" ).html( motivationalAuthor ).fadeTo( 60000, 0.4 );
 			})
 			.fail( function( state ) {
-				alert(state.message);
+				alert( 'Call to server to get message has failed!' );
 			});
 	}
 }
@@ -37,8 +37,8 @@ function changeButtonMoods() {
 }
 
 function setAppViewModel() {
-	$( "#message" ).html( inspMessage ).fadeTo( 100, 0.4 );
-	$( "#author" ).html( inspAuthor ).fadeTo( 100, 0.4 );
+	$( "#message" ).html( motivationalMessage ).fadeTo( 100, 0.4 );
+	$( "#author" ).html( motivationalAuthor ).fadeTo( 100, 0.4 );
 	
 	if( appViewModel != null ) { //removing binding as page was reloaded!!!
 		var element = $('#user')[ 0 ]; 

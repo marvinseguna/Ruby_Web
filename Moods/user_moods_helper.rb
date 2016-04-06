@@ -50,28 +50,23 @@ def init
 end
 
 
-# Submission checker
 def check_last_submission( user )
+
 	last_submission = IO.readlines( "db/#{user}.dat" ).last
-	
 	return false		if last_submission.empty? # Nothing is written in the file yet
 
-	date = last_submission.split( ',' ).first.to_i
-	current_date = Time.now.strftime( "%Y%m%d" ).to_i
+	user_date = last_submission.split( ',' ).first
+	current_date = Time.now.strftime( "%Y%m%d" )
 	
-	time = last_submission.split( ',' )[ 1 ].to_i
+	user_time = last_submission.split( ',' )[ 1 ].to_i
 	current_time = Time.now.strftime( "%H%M" ).to_i
-	nearest_time = ( 900 if current_time < 1300 ) || ( 1300 if current_time < 1700) || 1700
 	
-	if ( current_time - nearest_time ).between?( 15, 30 ) #15 minutes have passed. Did user input already?. Betwene is used to show notification once-per-section
-		if current_time - time > 15 #throw notification
+	time_intervals.each{ |time_range|		#Check if time falls within any range of the array		
+		if time_range.cover? current_time and time_range.cover? user_time
+			user_date == current_date ? ( return false ) : ( return true )
+		elsif time_range.cover? current_time and !time_range.cover? user_time
 			return true
-		else
-			date != current_date ? ( return true ) : ( return false )
 		end
-	else
-		return false
-	end
+	}
+	false
 end
-
-#20160402,0919,c

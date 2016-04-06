@@ -32,7 +32,5 @@ end
 
 def get_random_message( messages )
 	random = Random.new( Time.now.strftime('%H%M%S').to_i )
-	number = random.rand( messages.count ) + 1
-	
-	"#{messages[ number.to_s ].message}-#{messages[ number.to_s ].author}"
+	messages[( random.rand( messages.count ) + 1 ).to_s ]
 end

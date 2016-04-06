@@ -22,10 +22,11 @@
 /* Greeting message div, username in message and the emoticons div  */
 .greeting
 {
-	margin-left: 25%;
-	margin-top: 70px;
 	font-size: 32px;
+	margin-left: auto;
+	margin-top: 70px;
 	width: 800px;
+	margin-right: auto;
 }
 .username
 {
@@ -38,9 +39,10 @@
 }
 .emoticons_space
 {
-	margin-left: 23%;
+	margin-left: auto;
 	margin-top: 70px;
 	width: 800px;
+	margin-right: auto;
 }
 
 /* Images shown in main screen */

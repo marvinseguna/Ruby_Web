@@ -45,9 +45,9 @@ get "/SaveMood" do		#used when user selects a mood
 	insert_entry username, mood
 	
 	@messages = load_messages		if @messages == nil
-	message = get_random_message( @messages )
+	motivational_msg = get_random_message( @messages )
 	
-	JSON.generate({ :message => message })
+	JSON.generate({ :message => motivational_msg.message, :author => motivational_msg.author })
 end
 
 get "/GetMoodData" do		#used to retrieve information on users to display in grid

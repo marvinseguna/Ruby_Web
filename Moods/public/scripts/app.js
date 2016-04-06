@@ -3,6 +3,7 @@ var app = angular.module( 'moodsApp', [
   'ngRoute'
 ]);
 var currPage = 0;
+getNotificationPermission();
 checkSubmission(); 
 
 //To access variable from moods.js
@@ -36,6 +37,30 @@ app.controller( 'InfoViewController', function() {
 });
 
 //Notification logic
+function getNotificationPermission() {
+	Notification.requestPermission().then( function( result ) {
+	});
+}
+
+// function setServiceWorker() {
+	// subscribe();
+	
+	// if ( 'serviceWorker' in navigator ) {  
+		// navigator.serviceWorker.register( '/scripts/sw.js' ).then( function( reg ) {
+			// if( reg.installing ) {
+				// console.log( 'Service worker installing' );
+			// } 
+			// else if( reg.waiting ) {
+				// console.log( 'Service worker installed' );
+			// } else if( reg.active ) {
+				// console.log( 'Service worker active' );
+			// }
+			
+			// initialiseState( reg );
+		// });  
+	// }
+	// //checkSubmission();
+// }
 function checkSubmission() {
 	//send request to server to check last submission time
 	$.getJSON( "/GetLastSubmission", function( showNotification ) {
@@ -49,10 +74,11 @@ function notifyUser() {
 	var title;
 	var options;
 
-	title = 'Moods alert!';
+	title = 'Moods notifies how you feel ^_^';
 	options = {
-		body: 'Click here to visit the page to set your mood.',
-		tag: 'preset'
+		body: 'Click here to be redirected to set your mood.',
+		tag: 'preset',
+		icon: 'images/logo.png'
 	};
 
 	Notification.requestPermission( function() {
