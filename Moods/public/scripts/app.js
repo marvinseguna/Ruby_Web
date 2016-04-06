@@ -38,8 +38,9 @@ app.controller( 'InfoViewController', function() {
 
 //Notification logic
 function getNotificationPermission() {
-	Notification.requestPermission().then( function( result ) {
-	});
+	if( Notification.permission !== "granted" ) {
+		Notification.requestPermission();
+	}
 }
 
 // function setServiceWorker() {
