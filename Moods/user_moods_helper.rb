@@ -51,6 +51,7 @@ end
 
 
 def check_last_submission( user )
+	time_intervals = [ 900..930, 1300..1330, 1700..1730 ]
 
 	last_submission = IO.readlines( "db/#{user}.dat" ).last
 	return false		if last_submission.empty? # Nothing is written in the file yet
