@@ -3,10 +3,10 @@ var app = angular.module( 'moodsApp', [
   'ngRoute'
 ]);
 var currPage = 0;
+var timeInterval = 600000;
+var tabName = 'moods';
 getNotificationPermission();
-checkSubmission(); 
-
-//To access variable from moods.js
+checkSubmission();
 
 //Page routing
 app.config([ '$routeProvider', function ( $routeProvider ) {
@@ -42,34 +42,14 @@ function getNotificationPermission() {
 		Notification.requestPermission();
 	}
 }
-
-// function setServiceWorker() {
-	// subscribe();
-	
-	// if ( 'serviceWorker' in navigator ) {  
-		// navigator.serviceWorker.register( '/scripts/sw.js' ).then( function( reg ) {
-			// if( reg.installing ) {
-				// console.log( 'Service worker installing' );
-			// } 
-			// else if( reg.waiting ) {
-				// console.log( 'Service worker installed' );
-			// } else if( reg.active ) {
-				// console.log( 'Service worker active' );
-			// }
-			
-			// initialiseState( reg );
-		// });  
-	// }
-	// //checkSubmission();
-// }
 function checkSubmission() {
 	//send request to server to check last submission time
 	$.getJSON( "/GetLastSubmission", function( showNotification ) {
 		if( showNotification.show_it ) {
 			notifyUser();
 		}
-		setTimeout( checkSubmission, 900000 );
 	});
+	setTimeout( checkSubmission, timeInterval );
 }
 function notifyUser() {
 	var title;
@@ -85,8 +65,7 @@ function notifyUser() {
 	Notification.requestPermission( function() {
 		var notification = new Notification( title, options );
 		notification.onclick = function() {
-			var win = window.open( '#/', 'moods' );
-			win.focus();
+			window.focus();
 			notification.close();
 		}
 	});

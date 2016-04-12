@@ -24,8 +24,9 @@ def get_moods( users, start_date )
 	users.each{ |user| 
 		user_data = []
 		prev_data = ""
+		username = ( user.gsub ' ', '_' ).downcase
 		
-		File.read( "db/#{user}.dat" ).split.each{ |moods_info|
+		File.read( "db/#{username}.dat" ).split.each{ |moods_info|
 			prev_data = fill_user_data user_data, prev_data, moods_info, start_date
 		}
 		moods[ user ] = user_data
@@ -35,39 +36,48 @@ end
 
 def create_entry_and_file( username )
 	File.open( 'db/data.dat', 'a+' ) { |f| f.puts username }
-	File.new( "db/#{username}.dat", "w+" )
+	username = ( username.gsub ' ', '_' ).downcase
+	File.new( "db/#{username}.dat", "a+" )
 end
 
 def insert_entry( username, mood )
+	username = ( username.gsub ' ', '_' ).downcase
 	File.open( "db/#{username}.dat", 'a+' ) { |f| 
 		time = Time.now
-		f.puts "#{time.strftime("%Y%m%d")},#{time.strftime("%H%M")},#{mood[ 0 ]}"
+		f.puts "#{time.strftime( "%Y%m%d" )},#{time.strftime( "%H%M" )},#{mood[ 0 ]}"
 	}
 end
 
 def init
 	File.open( 'db/data.dat', 'a+' ){}
+	File.open( 'db/messages.dat', 'a+' ){}
 end
 
-
-def check_last_submission( user )
-	time_intervals = [ 900..930, 1300..1330, 1700..1730 ]
-
-	last_submission = IO.readlines( "db/#{user}.dat" ).last
-	return false		if last_submission.empty? # Nothing is written in the file yet
-
-	user_date = last_submission.split( ',' ).first
-	current_date = Time.now.strftime( "%Y%m%d" )
-	
-	user_time = last_submission.split( ',' )[ 1 ].to_i
-	current_time = Time.now.strftime( "%H%M" ).to_i
-	
-	time_intervals.each{ |time_range|		#Check if time falls within any range of the array		
-		if time_range.cover? current_time and time_range.cover? user_time
-			user_date == current_date ? ( return false ) : ( return true )
-		elsif time_range.cover? current_time and !time_range.cover? user_time
-			return true
-		end
+def check_for_valid_time( time_intervals, current_time )
+	time_intervals.each{ |time_interval|
+		return time_interval		if time_interval.cover? current_time
 	}
-	false
+	nil
+end
+def check_last_submission( username, previous_time, time_interval )
+	#skip if last request was sent longer than 10 minutes ago
+	current_time = Time.now.strftime( "%H%M" ).to_i
+	current_date = Time.now.strftime( "%Y%m%d" )
+	return false		if current_time - previous_time > time_interval + 1 # +1 minute to cater for the request time
+	
+	#check if current time falls within the defined time ranges
+	time_intervals = [ 0700..1100, 1101..1500, 1501..2359 ]
+	time_range = check_for_valid_time time_intervals, current_time
+	return false		if time_range == nil
+	
+	username = ( username.gsub ' ', '_' ).downcase
+	last_submission = IO.readlines( "db/#{username}.dat" ).last
+	return true		if last_submission.empty? # Nothing is written in the file yet
+	
+	user_date = last_submission.split( ',' ).first
+	user_time = last_submission.split( ',' )[ 1 ].to_i
+	
+	return false	if user_date == current_date and time_range.cover? user_time
+	
+	true
 end
