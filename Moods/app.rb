@@ -40,7 +40,7 @@ get "/SaveMood" do		# used when user selects a mood
 
 	cookies[ :name ] = username
 	@@users = get_users		if @@users.empty?
-	
+	unless @@users.include? username
 		create_entry_and_file username
 		@@users.push username
 	end
