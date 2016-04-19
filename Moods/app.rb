@@ -3,18 +3,20 @@ require 'sinatra'
 require 'sinatra/cookies'
 require 'user_moods_helper'
 require 'messages_helper'
+require 'gcm'
 require 'json'
 
-set :port, 8080
+#Server options
+set :port, 8443
 set :bind, '0.0.0.0'
 
+#Variables required to remain saved for every request
 @@users = []
-@@previous_time = 0000
+@@thread = nil
+@@time_interval = 10 # in minutes
 
 before do
-	@time_interval = 10 # in minutes
-	
-	init # creation of files, if required
+	init # creation of files (if not found)
 end
 
 get "/" do
@@ -27,7 +29,7 @@ get "/GetPreviousUsername" do		# used in beginning to retrieve the name to place
 	JSON.generate({ :previous_user => user })
 end
 
-get "/GetAllUsers" do		# used in beginning for autocomplete of input box
+get "/GetAllUsers" do		# used in beginning for autocomplete-functionality of input box
 	@@users = get_users		if @@users.empty?
 	JSON.generate({ :all_users => @@users })
 end
@@ -36,11 +38,12 @@ get "/SaveMood" do		# used when user selects a mood
 	username = params[ 'username' ]
 	mood = params[ 'mood' ]
 	
-	return "" if username == nil || mood == nil || !(["angry", "chill", "happy", "sad"].member? mood)
+	return "" if username == nil || mood == nil || !([ "angry", "chill", "happy", "sad" ].member? mood ) 
 
 	cookies[ :name ] = username
 	@@users = get_users		if @@users.empty?
-	unless @@users.include? username
+	
+	if !@@users.map(&:downcase).include? username.downcase
 		create_entry_and_file username
 		@@users.push username
 	end
@@ -59,10 +62,9 @@ get "/GetMoodData" do		# used to retrieve information to show in the data grid
 	JSON.generate( mood_data )
 end
 
-get "/GetLastSubmission" do		# used for notification alerts
-	return false		if cookies[ :name ] == nil		# do not make the check if the cookies are not set!
+get "/Register" do
+	cookies[ :registration_id ] = params[ :registrationId ]
+	@@thread = create_notification_thread cookies[ :name ], @@time_interval		if @@thread == nil
 	
-	show_it = check_last_submission cookies[ :name ], @@previous_time, @time_interval
-	@@previous_time = Time.now.strftime( "%H%M" ).to_i
-	JSON.generate({ :show_it => show_it })
+	JSON.generate({})
 end

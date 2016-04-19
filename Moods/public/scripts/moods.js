@@ -21,6 +21,8 @@ function AcceptInput( mood ) {
 				$( "#author" ).stop( true ).fadeTo( 100, 1 );
 				$( "#message" ).html( motivationalMessage ).fadeTo( 60000, 0.4 );
 				$( "#author" ).html( motivationalAuthor ).fadeTo( 60000, 0.4 );
+				
+				registerSW();
 			})
 			.fail( function( state ) {
 				alert( 'Call to server to get message has failed!' );
@@ -63,6 +65,30 @@ function setAppViewModel() {
 	$.getJSON( "/GetAllUsers", function( allUsers ) {
 		$( "#user" ).autocomplete({ 
 			source: allUsers.all_users
+		});
+	});
+}
+
+
+//Functionality for notifications
+function registerSW() {
+	navigator.serviceWorker.register( 'scripts/sw.js' )
+	.then( function( registration ) {
+		return registration.pushManager.getSubscription()
+		.then(function( subscription ) {
+			if ( subscription ) {
+				return subscription;
+			}
+			
+			return registration.pushManager.subscribe({ userVisibleOnly: true })
+		});
+	}).then( function( subscription ) {
+		var data = { registrationId : subscription.endpoint }
+		$.getJSON( "/Register", data )
+		.done( function(  ) {
+		})
+		.fail( function( state ) {
+			alert( 'Call to server to register client has failed!' );
 		});
 	});
 }

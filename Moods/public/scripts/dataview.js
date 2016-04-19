@@ -18,7 +18,7 @@ function setTableHeaders( dateHeaders, dateFrom, dayDifference ) { //setting dat
 	var tableColumnHeaders = '';
 	for( var i = 0; i < dayDifference; i++ ) {		
 		var fullDate = getFullDate( dateFrom );
-		tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" " + styleTableHeadersDoubleBorder + ">" + fullDate + "</th>"; //class=\"th_double_border\"
+		tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" " + styleTableHeadersDoubleBorder + ">" + fullDate + "</th>";
 
 		shownDates[ fullDate ] = i * 3;
 		dateFrom.setDate( dateFrom.getDate() + 1 );
@@ -27,23 +27,22 @@ function setTableHeaders( dateHeaders, dateFrom, dayDifference ) { //setting dat
 	tableColumnHeaders += "<th scope=\"col\" colspan=\"3\" " + styleTableHeaders + " style=\"border-right: 2px solid #4EC3F0;\">" + fullDate + "</th>";
 	shownDates[ fullDate ] = i * 3;
 	
-	dateHeaders.innerHTML = tableColumnHeaders; //class=\"th_single_border\", "<th></th>" + 
+	dateHeaders.innerHTML = tableColumnHeaders;
 	return shownDates;
 }
 function setTimeHeaders( timeHeaders, dayDifference ) { //setting the times beneath the dates
-	//timeHeaders.innerHTML = "<td style=\"width: 150px;\"></td>"; //class=\"td_single_border\"
 	for( var i = 0; i < dayDifference; i++ ) {
-		timeHeaders.innerHTML += "<td " + styleTableData + ">09:00</td><td " + styleTableData + ">13:00</td><td " + styleTableDataDoubleBorder + ">17:00</td>"; //class=\"td_double_border\"
+		timeHeaders.innerHTML += "<td " + styleTableData + ">09:00</td><td " + styleTableData + ">13:00</td><td " + styleTableDataDoubleBorder + ">17:00</td>"; 
 	}
 	timeHeaders.innerHTML += "<td " + styleTableData + ">09:00</td><td " + styleTableData + ">13:00</td><td " + styleTableData + ">17:00</td>";
 }
 function setMoodData( nameRow, currentColumn, doubleLines, maxColumns, mood ) {
 	if( currentColumn == (( 3 * doubleLines ) - 1 ) && currentColumn != maxColumns ) {
 		if( mood == '' ) {
-			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "></td>"; //class=\"td_double_border\"
+			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "></td>";
 		}
 		else {
-			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "><img src=\"/images/" + mood + ".png\"/></td>"; //class=\"td_double_border\"
+			nameRow.innerHTML += "<td " + styleTableDataDoubleBorder + "><img src=\"/images/" + mood + ".png\"/></td>";
 		}
 		doubleLines++;
 	}

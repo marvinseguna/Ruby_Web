@@ -81,3 +81,26 @@ def check_last_submission( username, previous_time, time_interval )
 	
 	true
 end
+
+def create_notification_thread( username, time_interval )
+	previous_time = 0000
+	Thread.new{
+		while true
+			push_req		if check_last_submission( username, previous_time, time_interval )
+			previous_time = Time.now.strftime( "%H%M" ).to_i
+			
+			sleep( time_interval * 60 )
+		end
+	}
+end
+def push_req
+	registration_id = cookies[ :registration_id ]
+	registration_id.gsub!( '%3A', ':' ) 
+	registration_id.gsub!( '%2F', '/' )
+	registration_id.gsub!( 'https://android.googleapis.com/gcm/send/', '' )
+	
+	gcm = GCM.new( "AIzaSyDF_wvs9YWlrP5g2X7kThbD_O1s5nmvwoY" )
+	reg_tokens = [ registration_id ]
+	options = { :data => { :title =>"foobar", :body => "this is a longer message" } }
+	response = gcm.send( reg_tokens, options )
+end

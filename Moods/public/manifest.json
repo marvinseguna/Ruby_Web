@@ -1,0 +1,8 @@
+{
+  "manifest_version": 2,
+  "name": "MoodsApp",
+  "version": "0.0.3",
+  "gcm_sender_id": "290754082899"
+}
+
+
