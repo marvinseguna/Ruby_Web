@@ -1,6 +1,10 @@
-https:
-    keystoreFile: config/ssl/keystore.jks
-    keystorePass: cs_moods
-    SSLCertificateFile: config/ssl/server.cer
-    SSLCertificateKeyFile: config/ssl/keystore.pem
-    port: 8443
+http:
+    port: 8080
+    address: 0.0.0.0
+
+# https:
+    # keystoreFile: config/ssl/keystore.jks
+    # keystorePass: cs_moods
+    # SSLCertificateFile: config/ssl/server.cer
+    # SSLCertificateKeyFile: config/ssl/keystore.pem
+    # port: 8443

@@ -37,7 +37,7 @@
 	border-right: none;
 	border-left: none;
 }
-.emoticons_space
+.emoticonsSpace
 {
 	margin-left: auto;
 	margin-top: 70px;
@@ -46,7 +46,7 @@
 }
 
 /* Images shown in main screen */
-.happy_image
+.happyImage
 {
 	width: 200px; 
 	height: 160px; 
@@ -55,13 +55,13 @@
     background-size: contain;
 	float: left;
 }
-.happy_image:hover
+.happyImage:hover
 {
     opacity: 0.5;
 	cursor: pointer;
 }
 
-.sad_image
+.sadImage
 {
 	width: 200px; 
 	height: 160px; 
@@ -71,13 +71,13 @@
 	overflow: hidden;
 	float: left;
 }
-.sad_image:hover
+.sadImage:hover
 {
     opacity: 0.5;
 	cursor: pointer;
 }
 
-.chill_image
+.chillImage
 {
 	width: 200px; 
 	height: 160px; 
@@ -87,13 +87,13 @@
 	overflow: hidden;
 	float: left;
 }
-.chill_image:hover
+.chillImage:hover
 {
     opacity: 0.5;
 	cursor: pointer;
 }
 
-.angry_image
+.angryImage
 {
 	width: 200px; 
 	height: 160px; 
@@ -103,66 +103,88 @@
 	overflow: hidden;
 	float: left;
 }
-.angry_image:hover
+.angryImage:hover
 {
     opacity: 0.5;
 	cursor: pointer;
 }
 
 
-/* Grid - outern div */
-.data_display
+/* Moods viewing grid */
+.moodsGrid
 {
-	margin-left: 250px;
-	margin-top: 50px;
-	font-size: 28px;
+	display: inline-block;
+	background-color: lightblue;
+	width: 100%;
+}
+.dateCell, .timeCell, .iconCell
+{
+	border: 1px solid black;
+	text-align: center;
+	vertical-align: top;
+	padding: 10px;
+	width: 100px;
+}
+.iconCell, .userCell
+{
+	height: 51px;
+}
+.emptyCell
+{
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding: 2px;
+}
+.dateCell
+{
+	width: 150px;
+	height: 40px;
+	font-size: 16px;
+}
+.timeCell
+{
+	width: 40px;
+	font-size: 12px;
+}
+.userCell, .lastUserCell
+{
+	position:absolute;
+	width: 170px;
+	font-size: 16px;
+	left: 0px; 
+	border-left: 1px solid black;
+	border-top: 1px solid black;
+	text-align: center;
+	padding-top: 15px;
+}
+.lastUserCell
+{
+	border-bottom: 1px solid black;
+	height: 52px;
 }
 
-/* Table layout */
-.tablesContainer
+.outer 
 {
-	margin-top: -20px;
-	margin-left: 100px;
-	display: inline-flex;
-	background: #C0C0C0;
 	position: relative;
+	width: 80%; 
+	margin-left: 10%;
+	background-color: lightblue;
 }
-.tableTitles
+.inner 
 {
-	text-align: center;
-	padding: 4px;
-	font-size: 16px;
-	width: 150px;
-	height: 55px;
-	border-left: 2px solid #4EC3F0;
-	border-top: 2px solid #4EC3F0;
-	border-bottom: 2px solid #4EC3F0;
+	overflow-x: scroll;
+	overflow-y: visible;
+	margin-left: 170px;
+	background-color: lightblue;
 }
-.gridNames
+.bottomPad
 {
-	text-align: right;
+	margin-bottom: 35px;
 }
-.tableData
-{
-	padding: 3px;
-	font-size: 12px;
-	text-align: center;
-	height: 55px;
-	border-left: 2px solid #4EC3F0;
-	border-top: 2px solid #4EC3F0;
-	border-bottom: 2px solid #4EC3F0;
-	border-right: 2px solid #4EC3F0;
-}
-.th_double_border, .td_double_border
-{
-	border-left: 2px solid #4EC3F0;
-	border-top: 2px solid #4EC3F0;
-	border-bottom: 2px solid #4EC3F0;
-	border-right: 8px double #4EC3F0;
-}
+
 
 /*calendars placed above table in View Data tab*/
-.calendars_area
+.calendarsArea
 {
 	width: 1000px;
 	height: 150px;
@@ -183,7 +205,7 @@ div.ui-datepicker
 {
 	font-size: 16px;
 }
-.filter_moods
+.filterMoods
 {
 	width: 60px;
 }

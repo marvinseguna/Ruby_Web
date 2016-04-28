@@ -67,6 +67,13 @@ function setAppViewModel() {
 			source: allUsers.all_users
 		});
 	});
+	
+	if ('serviceWorker' in navigator) {
+		console.log('no');
+	}
+	else {
+		console.log('yes');
+	}
 }
 
 

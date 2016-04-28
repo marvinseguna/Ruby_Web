@@ -25,10 +25,7 @@ app.controller( 'MoodController', function () {
 app.controller( 'DataViewController', function () {
 	initCalendars();
 	
-	var currentDate = new Date();
-	var fromDate = new Date();
-	fromDate.setDate( currentDate.getDate() - 6 );		//1 week
-	fillGrid( fromDate, currentDate );
+	formGrid( null, null ); // default is 7-days
 	changeButtonHistory();
 	currPage = 1;
 });

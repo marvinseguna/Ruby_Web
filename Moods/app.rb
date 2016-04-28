@@ -6,10 +6,6 @@ require 'messages_helper'
 require 'gcm'
 require 'json'
 
-#Server options
-set :port, 8443
-set :bind, '0.0.0.0'
-
 #Variables required to remain saved for every request
 @@users = []
 @@thread = nil
@@ -34,32 +30,36 @@ get "/GetAllUsers" do		# used in beginning for autocomplete-functionality of inp
 	JSON.generate({ :all_users => @@users })
 end
 
-get "/SaveMood" do		# used when user selects a mood
-	username = params[ 'username' ]
+get "/SaveMood" do  # used when user selects a mood
+	username = params[ 'username' ].split.map(&:capitalize).join(' ')
 	mood = params[ 'mood' ]
-	
-	return "" if username == nil || mood == nil || !([ "angry", "chill", "happy", "sad" ].member? mood ) 
+
+	return "" if username == nil || mood == nil || !(["angry", "chill", "happy", "sad"].member? mood)
 
 	cookies[ :name ] = username
-	@@users = get_users		if @@users.empty?
-	
-	if !@@users.map(&:downcase).include? username.downcase
+	@@users = get_users  if @@users.empty?
+
+	unless @@users.include? username
 		create_entry_and_file username
 		@@users.push username
 	end
-	
+
 	insert_entry username, mood
-	
-	@messages = load_messages		if @messages == nil
+
+	@messages = load_messages  if @messages == nil
 	motivational_msg = get_random_message( @messages )
-	
+
 	JSON.generate({ :message => motivational_msg.message, :author => motivational_msg.author })
 end
 
 get "/GetMoodData" do		# used to retrieve information to show in the data grid
+	date_from = params[ 'dateFrom' ]
+	date_to = params[ 'dateTo' ]
+	
 	@@users = get_users		if @@users.empty?
-	mood_data = get_moods @@users, ( Date.today - 6 ).strftime( "%Y%m%d" ).to_i
-	JSON.generate( mood_data )
+	mood_data = get_moods @@users, date_from, date_to
+	#JSON.generate( mood_data )
+	JSON.generate({})
 end
 
 get "/Register" do
