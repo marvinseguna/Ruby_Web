@@ -1,5 +1,6 @@
 function formGrid( dateFrom, dateTo) { //default is 1-week
 	var data = { dateFrom : dateFrom,  dateTo : dateTo }
+	alert('fgt');
 	$.getJSON( "/GetMoodData", data )
 		.done( function( moodData ) {
 		});

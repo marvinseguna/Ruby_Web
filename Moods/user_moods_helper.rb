@@ -85,105 +85,98 @@ end
 ############################################################################################
 def get_moods( users, date_from, date_to )
 	moods = {}
-	dates = {}
+	@empty_dates = {}
+	
 	if date_from != '' # filter
-		subtractor = 0
-		date_from = (( Date.parse date_from ).strftime '%Y%m%d').to_i
-		date_to = (( Date.parse date_to ).strftime '%Y%m%d').to_i
+		date_from = (( Date.parse date_from ).strftime '%Y%m%d' ).to_i
+		date_to = (( Date.parse date_to ).strftime '%Y%m%d' ).to_i
+		
 		users.each{ |user|
-			date = date_to.to_s
-			user_h = { date => { '0900' => '', '1300' => '', '1500' => '' }}
-			dates[ date ] = false	if !dates[ date ]
-			user = ( user.gsub ' ', '_' ).downcase
-			IO.readlines( "db/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
-				date_in_file = line.split( ',' ).first.to_i
-
-				next		if date_in_file > date_to
-				
-				while date != date_in_file.to_s
-					subtractor += 1
-					date = ( (Date.parse date_to.to_s) - subtractor ).strftime '%Y%m%d'
-					
-					break		if date.to_i < date_from
-					
-					user_h[ date ] = { '0900' => '', '1300' => '', '1500' => '' }
-					dates[ date ] = false		if !dates[ date ]
-				end
-				
-				break		if date_in_file < date_from
-				
-				time = line.split( ',' )[ 1 ].to_i
-				if time >= 700 and time < 1100
-					time = '0900'
-				elsif time >= 1100 and time < 1500
-					time = '1300'
-				elsif time >= 1500 and time < 1900
-					time = '1700'
-				else
-					time = ''
-				end
-				
-				mood = line.split( ',' ).last.chomp
-				if user_h[ date ][ time ] == '' and time != ''
-					user_h[ date ][ time ] = mood		
-					dates[ date ] = true
-				end
-			}
-			moods[ user ] = user_h
+			moods[ user ] = get_user_moods user, date_from, date_to
 		}
 	else # 7-days (DEFAULT)
-		subtractor = 0
-		incrementor = 0
+		date_from = (( Date.today - 7).strftime '%Y%m%d' ).to_i
+		date_to = ( Date.today.strftime '%Y%m%d' ).to_i
+		
 		users.each{ |user|
-			date = ( Date.today - subtractor ).strftime '%Y%m%d'
-			user_h = { date => { '0900' => '', '1300' => '', '1500' => '' }}
-			dates[ date ] = false	if !dates[ date ]
-			user = ( user.gsub ' ', '_' ).downcase
-			IO.readlines( "db/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
-				date_in_file = line.split( ',' ).first
-				
-				incrementor += 1		if date_in_file != date
-				break					if incrementor == 7
-				
-				while date_in_file != date
-					subtractor += 1
-					date = ( Date.today - subtractor ).strftime '%Y%m%d'
-					user_h[ date ] = { '0900' => '', '1300' => '', '1500' => '' }
-					dates[ date ] = false		if !dates[ date ]
-				end
-				
-				time = line.split( ',' )[ 1 ].to_i
-				if time >= 700 and time < 1100
-					time = '0900'
-				elsif time >= 1100 and time < 1500
-					time = '1300'
-				elsif time >= 1500 and time < 1900
-					time = '1700'
-				else
-					time = ''
-				end
-				
-				mood = line.split( ',' ).last.chomp
-				if user_h[ date ][ time ] == '' and time != ''
-					user_h[ date ][ time ] = mood		
-					dates[ date ] = true
-				end
-			}
-			moods[ user ] = user_h
+			moods[ user ] = get_user_moods user, date_from, date_to, true
 		}
 	end
+	moods = set_empty_dates moods # if for all users, specific dates are empty, just set them to nil (Easier for JS implementation of grid)
+	moods = make_array_equal moods # all users must have the same set of dates. No more, no less.
+	puts moods
+end
+
+def get_user_moods( user, date_from, date_to, default = false )
+	date = date_to.to_s
+	@empty_dates[ date ] = false		if !@empty_dates.include? date
+	moods = { date => { '0900' => '', '1300' => '', '1700' => '' }}
+	user = ( user.gsub ' ', '_' ).downcase
+	incrementor = 0
 	
-	dates.each{ |date, value| 
-		if !value
-			moods.each{ |user, dates|
-				dates.each{ |user_date, times| 
-					if user_date == date
-						moods[ user ][ user_date ] = nil
-						break
-					end
-				}
-			}
+	IO.readlines( "db/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
+		date_in_file = line.split( ',' ).first.to_i
+		
+		incrementor += 1		if date_in_file.to_s != date and default
+		break					if incrementor == 7 and default
+		
+		next		if date_in_file > date_to and !default
+		while date != date_in_file.to_s
+			date = (( Date.parse date ) - 1 ).strftime '%Y%m%d'
+			break		if date.to_i < date_from and !default
+			moods[ date ] = { '0900' => '', '1300' => '', '1700' => '' }
+			@empty_dates[ date ] = false		if !@empty_dates.include? date
+		end
+		break		if date_in_file < date_from and !default
+		
+		time = line.split( ',' )[ 1 ].to_i
+		time = get_time_slot time
+		
+		mood = line.split( ',' ).last.chomp
+		if time != '' and moods[ date ][ time ] == ''
+			moods[ date ][ time ] = mood
+			@empty_dates[ date ] = true
 		end
 	}
-	puts moods
+	moods
+end
+
+def get_time_slot( time )
+	if time >= 700 and time < 1100
+		'0900'
+	elsif time >= 1100 and time < 1500
+		'1300'
+	elsif time >= 1500 and time < 1900
+		'1700'
+	else
+		''
+	end
+end
+
+def set_empty_dates( moods )
+	@empty_dates.each{ |date, value|
+		next		if value
+		moods.each{ |user, data|
+			data.each{ |date_2, time_moods| 
+				moods[ user ][ date_2 ] = nil		if date == date_2
+			}
+		}
+	}
+	moods
+end
+
+def make_array_equal( moods )
+	dates = []
+	moods.each{ |user, data| dates.push data.keys }
+	
+	return moods		if dates.empty?
+	common_dates = dates[ 0 ]
+	dates.each{ |date| common_dates = common_dates & date }
+	
+	moods.each{ |user, data|
+		data.each{ |date_2, time_moods| 
+			moods[ user ].delete date_2		if !common_dates.include? date_2
+		}
+	}
+	moods
 end
