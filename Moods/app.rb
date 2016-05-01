@@ -58,8 +58,8 @@ get "/GetMoodData" do		# used to retrieve information to show in the data grid
 	
 	@@users = get_users		if @@users.empty?
 	mood_data = get_moods @@users, date_from, date_to
-	#JSON.generate( mood_data )
-	JSON.generate({})
+	
+	JSON.generate( mood_data )
 end
 
 get "/Register" do

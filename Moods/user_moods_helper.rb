@@ -103,8 +103,7 @@ def get_moods( users, date_from, date_to )
 		}
 	end
 	moods = set_empty_dates moods # if for all users, specific dates are empty, just set them to nil (Easier for JS implementation of grid)
-	moods = make_array_equal moods # all users must have the same set of dates. No more, no less.
-	puts moods
+	make_array_equal moods # all users must have the same set of dates. No more, no less.
 end
 
 def get_user_moods( user, date_from, date_to, default = false )
