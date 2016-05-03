@@ -15,12 +15,11 @@ function constructTable( moodData ) {
 	var dateRow = table.insertRow( 0 );
 	var timeRow = table.insertRow( 1 );
 	
-	dateRow.innerHTML = "<td rowspan=\"2\"></td>"; // to allow for the 2-beginning cells to be empty
+	dateRow.innerHTML = "<td rowspan=\"2\" style\"width:1px;\"></td>"; // to allow for the 2-beginning cells to be empty
 	var rows = 1;
 	
 	var keys = Object.keys( moodData );
 	var lastUser = keys.slice( -1 )[ 0 ];
-	console.log(lastUser);
 	
 	for( var user in moodData ) { // { user => { date1 => { t1 => '', t2 => '', t3 => '' }, date2 => { t1 => '', t2 => '', t3 => '' }, ...} }
 		rows += 1;
@@ -32,7 +31,6 @@ function constructTable( moodData ) {
 			else {
 				userRow.innerHTML += ( USERCELL + user + "</th>" );
 			}
-			
 			
 			for( var date in moodData[ user ]) {				
 				if( moodData[ user ].hasOwnProperty( date )) {
@@ -46,7 +44,7 @@ function constructTable( moodData ) {
 function addToHTML( dateRow, timeRow, rows, userRow, date, moods ) {
 	date = formatDate( date );
 	
-	if( moods == '' ) {
+	if( moods == null || moods == '' ) {
 		if( rows == 2) { //processing first record
 			dateRow.innerHTML += EMPTYCELLHEADER;
 			timeRow.innerHTML += EMPTYCELLDATA;
@@ -57,14 +55,15 @@ function addToHTML( dateRow, timeRow, rows, userRow, date, moods ) {
 		if( rows == 2) { //processing first record
 			dateRow.innerHTML += ( DATECELL + ( "0" + date.getDate()).slice( -2 ) + "/" + ( "0" + date.getMonth()).slice( -2 ) + "/" + date.getFullYear() + "</th>" );
 		}
-		for( var time in moods ) {
+		
+		Object.keys( moods ).sort().forEach( function( time ) { // to ensure that the times are sorted
 			if( rows == 2) { //processing first record
 				timeRow.innerHTML += ( TIMECELL + time + "</td>" )
 			}
 			if( moods.hasOwnProperty( time )) {
 				userRow.innerHTML += getIconToDisplay( moods[ time ]);
 			}
-		}
+		});
 	}
 }
 
@@ -98,6 +97,9 @@ function formGrid( dateFrom, dateTo) { //default is 1-week
 	var data = { dateFrom : dateFrom,  dateTo : dateTo }
 	$.getJSON( "/GetMoodData", data )
 		.done( function( moodData ) {
+			var table = document.getElementById( "moodsTable" );
+			table.innerHTML = "";
+			
 			if( moodData != null ) {
 				constructTable( moodData );
 			}

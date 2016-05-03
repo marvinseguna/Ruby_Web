@@ -21,7 +21,7 @@ end
 
 def init
 	File.open( 'db/data.dat', 'a+' ){}
-	File.open( 'db/messages.dat', 'a+' ){}
+	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'} # write a sample message
 end
 
 
@@ -90,7 +90,7 @@ def get_moods( users, date_from, date_to )
 	if date_from != '' # filter
 		date_from = (( Date.parse date_from ).strftime '%Y%m%d' ).to_i
 		date_to = (( Date.parse date_to ).strftime '%Y%m%d' ).to_i
-		
+
 		users.each{ |user|
 			moods[ user ] = get_user_moods user, date_from, date_to
 		}
@@ -117,15 +117,17 @@ def get_user_moods( user, date_from, date_to, default = false )
 		date_in_file = line.split( ',' ).first.to_i
 		
 		incrementor += 1		if date_in_file.to_s != date and default
-		break					if incrementor == 7 and default
+		break					if incrementor == 8 and default
 		
 		next		if date_in_file > date_to and !default
+		
 		while date != date_in_file.to_s
 			date = (( Date.parse date ) - 1 ).strftime '%Y%m%d'
 			break		if date.to_i < date_from and !default
 			moods[ date ] = { '0900' => '', '1300' => '', '1700' => '' }
 			@empty_dates[ date ] = false		if !@empty_dates.include? date
 		end
+		
 		break		if date_in_file < date_from and !default
 		
 		time = line.split( ',' )[ 1 ].to_i

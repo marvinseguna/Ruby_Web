@@ -114,7 +114,6 @@
 .moodsGrid
 {
 	display: inline-block;
-	width: 100%;
 }
 .dateCell, .timeCell, .iconCell
 {
@@ -122,7 +121,7 @@
 	text-align: center;
 	vertical-align: top;
 	padding: 10px;
-	width: 4%;
+	width: 10000px;
 }
 .iconCell, .userCell
 {
@@ -130,14 +129,13 @@
 }
 .emptyCell
 {
-	border-left: 1px solid black;
-	border-right: 1px solid black;
+	border: 1px solid black;
 	padding: 2px;
-	width: 4%;
+	width: 1px;
 }
 .dateCell
 {
-	width: 150px;
+	width: 10000px; /* used for zooming */
 	height: 40px;
 	font-size: 16px;
 }

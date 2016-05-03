@@ -9,7 +9,7 @@ require 'json'
 #Variables required to remain saved for every request
 @@users = []
 @@thread = nil
-@@time_interval = 10 # in minutes
+@@time_interval = 600 # in seconds (10mins)
 
 before do
 	init # creation of files (if not found)
