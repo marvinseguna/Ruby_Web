@@ -90,24 +90,27 @@ def get_moods( users, date_from, date_to )
 	if date_from != '' # filter
 		date_from = (( Date.parse date_from ).strftime '%Y%m%d' ).to_i
 		date_to = (( Date.parse date_to ).strftime '%Y%m%d' ).to_i
-
+		
 		users.each{ |user|
 			moods[ user ] = get_user_moods user, date_from, date_to
 		}
 	else # 7-days (DEFAULT)
-		date_from = (( Date.today - 7).strftime '%Y%m%d' ).to_i
-		date_to = ( Date.today.strftime '%Y%m%d' ).to_i
-		
 		users.each{ |user|
-			moods[ user ] = get_user_moods user, date_from, date_to, true
+			moods[ user ] = get_user_moods user
 		}
-	end
+	end	
 	moods = set_empty_dates moods # if for all users, specific dates are empty, just set them to nil (Easier for JS implementation of grid)
 	make_array_equal moods # all users must have the same set of dates. No more, no less.
 end
 
-def get_user_moods( user, date_from, date_to, default = false )
-	date = date_to.to_s
+def get_user_moods( user, date_from = 0, date_to = 99991231 )
+	date = ''
+	if date_to == 99991231
+		date = Time.now.strftime '%Y%m%d'
+	else
+		date = date_to.to_s
+	end
+	
 	@empty_dates[ date ] = false		if !@empty_dates.include? date
 	moods = { date => { '0900' => '', '1300' => '', '1700' => '' }}
 	user = ( user.gsub ' ', '_' ).downcase
@@ -115,26 +118,28 @@ def get_user_moods( user, date_from, date_to, default = false )
 	
 	IO.readlines( "db/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
 		date_in_file = line.split( ',' ).first.to_i
+		next		if date_in_file > date_to
 		
-		incrementor += 1		if date_in_file.to_s != date and default
-		break					if incrementor == 8 and default
-		
-		next		if date_in_file > date_to and !default
+		if date_from == 0
+			incrementor += 1		if date_in_file.to_s != date
+			break					if incrementor == 7
+		end
 		
 		while date != date_in_file.to_s
 			date = (( Date.parse date ) - 1 ).strftime '%Y%m%d'
-			break		if date.to_i < date_from and !default
+			break		if date.to_i < date_from
 			moods[ date ] = { '0900' => '', '1300' => '', '1700' => '' }
 			@empty_dates[ date ] = false		if !@empty_dates.include? date
 		end
 		
-		break		if date_in_file < date_from and !default
+		break		if date_in_file < date_from
 		
 		time = line.split( ',' )[ 1 ].to_i
 		time = get_time_slot time
 		
-		mood = line.split( ',' ).last.chomp
 		if time != '' and moods[ date ][ time ] == ''
+			mood = line.split( ',' ).last.chomp
+			
 			moods[ date ][ time ] = mood
 			@empty_dates[ date ] = true
 		end
@@ -143,11 +148,11 @@ def get_user_moods( user, date_from, date_to, default = false )
 end
 
 def get_time_slot( time )
-	if time >= 700 and time < 1100
+	if time < 1100
 		'0900'
 	elsif time >= 1100 and time < 1500
 		'1300'
-	elsif time >= 1500 and time < 1900
+	elsif time >= 1500
 		'1700'
 	else
 		''
