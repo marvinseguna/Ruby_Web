@@ -9,7 +9,8 @@ require 'json'
 #Variables required to remain saved for every request
 @@users = []
 @@thread = nil
-@@time_interval = 600 # in seconds (10mins)
+@@time_interval = 6 # in seconds (10mins)
+@@previous_time = 0
 
 before do
 	init # creation of files (if not found)
@@ -67,4 +68,12 @@ get "/Register" do
 	@@thread = create_notification_thread cookies[ :name ], @@time_interval		if @@thread == nil
 	
 	JSON.generate({})
+end
+
+get "/GetLastSubmission" do		# used for notification alerts
+	return false		if cookies[ :name ] == nil	
+	
+	show_it = check_last_submission cookies[ :name ], @@previous_time, @@time_interval
+ 	@@previous_time = Time.now.strftime( "%H%M" ).to_i
+ 	JSON.generate({ :show_it => show_it })
 end

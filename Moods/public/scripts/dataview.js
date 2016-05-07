@@ -10,6 +10,9 @@ var SADICONCELL = "<td class=\"iconCell\"><img src=\"/images/sad_icon.png\"/></t
 var ANGRYICONCELL = "<td class=\"iconCell\"><img src=\"/images/angry_icon.png\"/></td>"
 var EMPTYICONCELL = "<td class=\"iconCell\"></td>"
 
+var USERCELLODD = "<th scope=\"row\" class=\"userCell oddGridCell\">"
+var USERCELLEVEN = "<th scope=\"row\" class=\"userCell evenGridCell\">"
+
 function constructTable( moodData ) {
 	var table = document.getElementById( "moodsTable" );
 	var dateRow = table.insertRow( 0 );
@@ -25,11 +28,14 @@ function constructTable( moodData ) {
 		rows += 1;
 		if( moodData.hasOwnProperty( user )) {
 			var userRow = table.insertRow( rows );
-			if( user == lastUser ) {
-				userRow.innerHTML += ( LASTUSERCELL + user + "</th>" );
+			
+			if( rows % 2 == 0 ) {
+				userRow.className = "evenGridCell";
+				userRow.innerHTML += ( USERCELLEVEN + user + "</th>" );
 			}
 			else {
-				userRow.innerHTML += ( USERCELL + user + "</th>" );
+				userRow.className = "oddGridCell";
+				userRow.innerHTML += ( USERCELLODD + user + "</th>" );
 			}
 			
 			for( var date in moodData[ user ]) {				

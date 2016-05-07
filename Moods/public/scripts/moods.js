@@ -79,23 +79,59 @@ function setAppViewModel() {
 
 //Functionality for notifications
 function registerSW() {
-	navigator.serviceWorker.register( 'scripts/sw.js' )
-	.then( function( registration ) {
-		return registration.pushManager.getSubscription()
-		.then(function( subscription ) {
-			if ( subscription ) {
-				return subscription;
-			}
-			
-			return registration.pushManager.subscribe({ userVisibleOnly: true })
+	
+	var isFirefox = typeof InstallTrigger !== 'undefined';
+	if( isFirefox ) { // Service workers are not supported on the latest version of Firefox!
+		doNormalNotifications();
+	}
+	else {
+		navigator.serviceWorker.register( 'scripts/sw.js' )
+		.then( function( registration ) {
+			return registration.pushManager.getSubscription()
+			.then(function( subscription ) {
+				if ( subscription ) {
+					return subscription;
+				}
+				
+				return registration.pushManager.subscribe({ userVisibleOnly: true })
+			});
+		}).then( function( subscription ) {
+			var data = { registrationId : subscription.endpoint }
+			$.getJSON( "/Register", data )
+			.done( function(  ) {
+			})
+			.fail( function( state ) {
+				alert( 'Call to server to register client has failed!' );
+			});
 		});
-	}).then( function( subscription ) {
-		var data = { registrationId : subscription.endpoint }
-		$.getJSON( "/Register", data )
-		.done( function(  ) {
-		})
-		.fail( function( state ) {
-			alert( 'Call to server to register client has failed!' );
-		});
-	});
+	}
 }
+
+function doNormalNotifications() {
+	$.getJSON( "/GetLastSubmission", function( showNotification ) {
+ 		if( showNotification.show_it ) {
+ 			notifyUser();
+ 		}
+		setTimeout( doNormalNotifications, 6000 );
+ 	});
+}
+
+ function notifyUser() {
+ 	var title;
+ 	var options;
+ 
+ 	title = 'Moods notifies how you feel ^_^';
+ 	options = {
+ 		body: 'Click here to be redirected to set your mood.',
+ 		tag: 'preset',
+ 		icon: 'images/logo.png'
+ 	};
+ 
+ 	Notification.requestPermission( function() {
+ 		var notification = new Notification( title, options );
+ 		notification.onclick = function() {
+ 			window.focus();
+ 			notification.close();
+ 		}
+ 	});
+ } 

@@ -98,7 +98,8 @@ def get_moods( users, date_from, date_to )
 		users.each{ |user|
 			moods[ user ] = get_user_moods user
 		}
-	end	
+	end
+	
 	moods = set_empty_dates moods # if for all users, specific dates are empty, just set them to nil (Easier for JS implementation of grid)
 	make_array_equal moods # all users must have the same set of dates. No more, no less.
 end
@@ -118,7 +119,7 @@ def get_user_moods( user, date_from = 0, date_to = 99991231 )
 	
 	IO.readlines( "db/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
 		date_in_file = line.split( ',' ).first.to_i
-		next		if date_in_file > date_to
+		next		if date_in_file > date_to or line == ''
 		
 		if date_from == 0
 			incrementor += 1		if date_in_file.to_s != date
