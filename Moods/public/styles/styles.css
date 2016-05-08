@@ -130,8 +130,8 @@
 {
 	border: 1px solid lightblue;
 	background-color: lightblue;
-	padding: 2px;
-	width: 1px;
+	padding: 0px;
+	width: 0px;
 }
 .dateCell
 {
@@ -149,7 +149,7 @@
 	width: 170px;
 	font-size: 14px;
 	left: 0px; 
-	text-align: center;
+	text-align: right;
 	padding-top: 15px;
 }
 .lastUserCell

@@ -21,7 +21,8 @@ end
 
 def init
 	File.open( 'db/data.dat', 'a+' ){}
-	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'} # write a sample message
+	puts "messages exist! true or false? #{File.file?( 'db/messages.dat' )}"
+	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}		if !File.file?( 'db/messages.dat' ) # write a sample message
 end
 
 
