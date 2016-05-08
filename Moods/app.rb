@@ -12,9 +12,12 @@ require 'json'
 @@time_interval = 6 # in seconds (10mins)
 @@previous_time = 0
 
-before do
+configure do
 	init # creation of files (if not found)
 end
+
+#before do # runs before every request
+#end
 
 get "/" do
 	content_type 'html'

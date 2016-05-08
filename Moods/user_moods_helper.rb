@@ -20,8 +20,7 @@ def insert_entry( username, mood )
 end
 
 def init
-	File.open( 'db/data.dat', 'a+' ){}
-	puts "messages exist! true or false? #{File.file?( 'db/messages.dat' )}"
+	File.open( 'db/data.dat', 'a+' ){}		if !File.file?( 'db/data.dat' )
 	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}		if !File.file?( 'db/messages.dat' ) # write a sample message
 end
 
