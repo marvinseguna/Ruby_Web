@@ -22,7 +22,8 @@ function AcceptInput( mood ) {
 				$( "#message" ).html( motivationalMessage ).fadeTo( 60000, 0.4 );
 				$( "#author" ).html( motivationalAuthor ).fadeTo( 60000, 0.4 );
 				
-				registerSW();
+				//registerSW();
+				doNormalNotifications();
 			})
 			.fail( function( state ) {
 				alert( 'Call to server to get message has failed!' );
@@ -67,13 +68,6 @@ function setAppViewModel() {
 			source: allUsers.all_users
 		});
 	});
-	
-	if ('serviceWorker' in navigator) {
-		console.log('no');
-	}
-	else {
-		console.log('yes');
-	}
 }
 
 

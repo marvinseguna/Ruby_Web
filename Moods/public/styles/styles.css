@@ -37,6 +37,12 @@
 	border-right: none;
 	border-left: none;
 }
+.team
+{
+	width: 80px;
+	border: none;
+	text-align: center;
+}
 .emoticonsSpace
 {
 	margin-left: auto;
