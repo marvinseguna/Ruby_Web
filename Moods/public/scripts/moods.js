@@ -106,7 +106,7 @@ function doNormalNotifications() {
  		if( showNotification.show_it ) {
  			notifyUser();
  		}
-		setTimeout( doNormalNotifications, 6000 );
+		setTimeout( doNormalNotifications, 600000 );
  	});
 }
 
