@@ -9,7 +9,7 @@ require 'json'
 #Variables required to remain saved for every request
 @@users = []
 @@thread = nil
-@@time_interval = 6 # in seconds (10mins)
+@@time_interval = 600 # in seconds (10mins)
 @@previous_time = 0
 
 configure do
