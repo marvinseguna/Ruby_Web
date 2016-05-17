@@ -6,15 +6,13 @@ require 'messages_helper'
 require 'gcm'
 require 'json'
 
-#Variables required to remain saved for every request
+# Variables required to remain saved for every request
 @@users = []
 @@thread = nil
-<<<<<<< HEAD
-@@time_interval = 10 # in minutes
-=======
-@@time_interval = 600 # in seconds (10mins)
->>>>>>> origin/master
+@@time_interval = 10		# in minutes
 @@previous_time = 0
+
+set :cookie_options, :expires => Time.now + ( 3600 * 24 )		# cookies are valid for 1-day after they are set
 
 configure do
 	init # creation of files (if not found)
@@ -31,6 +29,10 @@ end
 get "/GetPreviousInfo" do		# used in beginning to retrieve the name to place in the input box
 	user = ( cookies[ :user ] == nil ? "Enter full name" : cookies[ :user ] )
 	team = ( cookies[ :team ] == nil ? "CS" : cookies[ :team ] )
+	
+	puts "user cookie: #{cookies[ :user ]}"
+	puts "team cookie: #{cookies[ :team ]}"
+	
 	JSON.generate({ :previous_user => user, :team => team })
 end
 

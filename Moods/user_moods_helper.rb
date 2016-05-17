@@ -139,7 +139,6 @@ def get_user_moods( team, user, date_from = 0, date_to = 99991231 )
 		next		if date_in_file > date_to
 		
 		if date_from == 0
-			puts "user:#{user}, date_in_file:#{date_in_file}, date:#{date}, moods.length: #{moods.length}, incrementor:#{incrementor}"
 			incrementor += 1		if date_in_file != date and moods.length != 1		# for first one, it doesn't apply
 			break					if incrementor == 6		# Default: 7-days
 		end
