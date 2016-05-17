@@ -29,10 +29,6 @@ end
 get "/GetPreviousInfo" do		# used in beginning to retrieve the name to place in the input box
 	user = ( cookies[ :user ] == nil ? "Enter full name" : cookies[ :user ] )
 	team = ( cookies[ :team ] == nil ? "CS" : cookies[ :team ] )
-	
-	puts "user cookie: #{cookies[ :user ]}"
-	puts "team cookie: #{cookies[ :team ]}"
-	
 	JSON.generate({ :previous_user => user, :team => team })
 end
 
