@@ -100,14 +100,27 @@ function getIconToDisplay( mood ) { // h, c, s, a
 }
 
 function formGrid( dateFrom, dateTo) { //default is 1-week
-	var data = { dateFrom : dateFrom,  dateTo : dateTo }
+	var teamFilter = document.getElementById( 'teamFilter' ).value;
+	var data = { dateFrom: dateFrom,  dateTo: dateTo, team: teamFilter }
 	$.getJSON( "/GetMoodData", data )
-		.done( function( moodData ) {
+		.done( function( usersInfo ) {
+			//Upon retrieving result, set the auto-complete. Default value should be 'CS' if it is set to empty.
+			if( teamFilter == '' ) {
+				document.getElementById( 'teamFilter' ).value = 'CS';
+				
+				$( "#teamFilter" ).autocomplete({ 
+					source: usersInfo.teams
+				});
+			}
+			
+			//Refresh the table and re-construct the grid.
 			var table = document.getElementById( "moodsTable" );
 			table.innerHTML = "";
-			
-			if( moodData != null ) {
-				constructTable( moodData );
+			if( usersInfo.moodData != null ) {
+				constructTable( usersInfo.moodData );
+			}
+			else {
+				alert( 'formGrid: Mood data was not received correctly from server!' );
 			}
 		});
 }

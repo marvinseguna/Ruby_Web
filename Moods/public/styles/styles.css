@@ -36,12 +36,19 @@
 	border-top: none;
 	border-right: none;
 	border-left: none;
+	outline: none;
 }
 .team
 {
 	width: 80px;
-	border: none;
+	border-top: none;
+	border-right: none;
+	border-left: none;
 	text-align: center;
+	border: 2px solid #dadada;
+    border-radius: 7px;
+	outline: none;
+	background: lightblue;
 }
 .emoticonsSpace
 {
@@ -119,14 +126,15 @@
 /* Moods viewing grid */
 .moodsGrid
 {
-	display: inline-block;
+	/*display: inline-block;*/
+	width:100%;
 }
 .dateCell, .timeCell, .iconCell
 {
 	text-align: center;
 	vertical-align: top;
 	padding: 5px;
-	width: 10000px;
+	width: 3000px;
 }
 .iconCell, .userCell
 {
@@ -141,7 +149,6 @@
 }
 .dateCell
 {
-	width: 10000px; /* used for zooming */
 	font-size: 14px;
 }
 .timeCell
@@ -208,7 +215,7 @@
 	margin-left: 100px;
 	margin-bottom: -70px;
 }
-.calendars, .filter_moods
+.calendarFilters, .filter_moods
 {
 	float: left; 
 	margin-right: 20px;
@@ -220,10 +227,6 @@ div.ui-datepicker
 .ui-datepickerth
 {
 	font-size: 16px;
-}
-.filterMoods
-{
-	width: 60px;
 }
 
 .inspirationMessage

@@ -4,12 +4,15 @@ var motivationalMessage = "";
 var motivationalAuthor = "";
 
 function AcceptInput( mood ) {
-	appViewModel.userId( document.getElementById( 'user' ).value ); //ensure the last username entered is being considered
-	if( appViewModel.userId() == '' || appViewModel.userId() == 'Enter full name' ) { //If username is not provided -> alert
-		alert( 'Kindly provide full name (e.g. Joe Smith) before selecting mood!' );
+	appViewModel.user( document.getElementById( "user" ).value );		//ensure the last username entered is being considered
+	appViewModel.team( document.getElementById( "team" ).value );
+	
+	if( appViewModel.user() == '' || appViewModel.user() == 'Enter full name' || 
+		appViewModel.team() == '' ) {		//If username/team is not provided -> alert
+		alert( 'Kindly provide full name (e.g. Joe Smith) and the respective team before selecting mood!' );
 	}
 	else { //else, add user in cookie & file system
-		var data = { username : appViewModel.userId(), mood : mood }
+		var data = { username: appViewModel.user(), team: appViewModel.team(), mood: mood }
 		$.getJSON( "/SaveMood", data )
 			.done( function( msg ) {
 				var message = msg.message;
@@ -44,28 +47,31 @@ function setAppViewModel() {
 	$( "#author" ).html( motivationalAuthor ).fadeTo( 100, 0.4 );
 	
 	if( appViewModel != null ) { //removing binding as page was reloaded!!!
-		var element = $('#user')[ 0 ]; 
+		var element = $( '#user' )[ 0 ]; 
 		ko.cleanNode( element ); //Keeping same binding will still keep observable but does not update UI!!!!!
+		var element = $( '#team' )[ 0 ]; 
+		ko.cleanNode( element );
 	}
 	
 	
 	appViewModel = {
-		userId: ko.observable( '' )
+		user: ko.observable( '' ),
+		team: ko.observable( '' )
 	};
-	ko.applyBindings( appViewModel, document.getElementById( 'user' ));
+	ko.applyBindings( appViewModel, document.getElementById( "team" ));
+	ko.applyBindings( appViewModel, document.getElementById( "user" ));
 	
-	$.getJSON( "/GetPreviousUsername", function( cookieUser ) {
-		if( cookieUser.previous_user == '' ) {
-			appViewModel.userId( "Enter full name" ); 
-		}
-		else {
-			appViewModel.userId( cookieUser.previous_user ); 
-		}
+	$.getJSON( "/GetPreviousInfo", function( cookieUser ) {
+		appViewModel.user( cookieUser.previous_user ); 
+		appViewModel.team( cookieUser.team ); 
     }); 
 	
-	$.getJSON( "/GetAllUsers", function( allUsers ) {
+	$.getJSON( "/GetAllUsers", function( usersInfo ) {
 		$( "#user" ).autocomplete({ 
-			source: allUsers.all_users
+			source: usersInfo.users
+		});
+		$( "#team" ).autocomplete({ 
+			source: usersInfo.teams
 		});
 	});
 }
@@ -106,7 +112,7 @@ function doNormalNotifications() {
  		if( showNotification.show_it ) {
  			notifyUser();
  		}
-		setTimeout( doNormalNotifications, 6000 );
+		setTimeout( doNormalNotifications, 600000 );
  	});
 }
 
