@@ -4,8 +4,8 @@ var motivationalMessage = "";
 var motivationalAuthor = "";
 
 function AcceptInput( mood ) {
-	appViewModel.user( document.getElementById( "user" ).value );		//ensure the last username entered is being considered
-	appViewModel.team( document.getElementById( "team" ).value );
+	appViewModel.user( document.getElementById( "user" ).innerHTML );		//ensure the last username entered is being considered
+	appViewModel.team( document.getElementById( "team" ).innerHTML );
 	
 	if( appViewModel.user() == '' || appViewModel.user() == 'Enter full name' || 
 		appViewModel.team() == '' ) {		//If username/team is not provided -> alert
@@ -26,12 +26,21 @@ function AcceptInput( mood ) {
 				$( "#author" ).html( motivationalAuthor ).fadeTo( 60000, 0.4 );
 				
 				//registerSW();
-				doNormalNotifications();
 			})
 			.fail( function( state ) {
 				alert( 'Call to server to get message has failed!' );
 			});
 	}
+}
+
+function highlightText( id ) {
+	var span = document.getElementById( id );
+	var range = document.createRange();
+	range.setStartBefore( span.firstChild );
+	range.setEndAfter( span.lastChild );
+	var sel = window.getSelection();
+	sel.removeAllRanges();
+	sel.addRange( range );
 }
 
 function changeButtonMoods() {
@@ -52,11 +61,14 @@ function setAppViewModel() {
 		var element = $( '#team' )[ 0 ]; 
 		ko.cleanNode( element );
 	}
+	else {
+		doNormalNotifications();
+	}
 	
 	
 	appViewModel = {
-		user: ko.observable( '' ),
-		team: ko.observable( '' )
+		user: ko.observable( 'CS' ),
+		team: ko.observable( 'Enter full name' )
 	};
 	ko.applyBindings( appViewModel, document.getElementById( "team" ));
 	ko.applyBindings( appViewModel, document.getElementById( "user" ));

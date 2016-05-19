@@ -6,6 +6,7 @@ var app = angular.module( 'moodsApp', [
   'ngRoute'
 ]);
 
+
 getNotificationPermission();
 
 //Page routing

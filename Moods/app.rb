@@ -12,7 +12,7 @@ require 'json'
 @@time_interval = 10		# in minutes
 @@previous_time = 0
 
-set :cookie_options, :expires => Time.now + ( 3600 * 24 )		# cookies are valid for 1-day after they are set
+set :cookie_options, :expires => Time.now + ( 3600 * 24 * 30 )		# cookies are valid for 1-day after they are set
 
 configure do
 	init # creation of files (if not found)
@@ -79,7 +79,7 @@ get "/Register" do
 end
 
 get "/GetLastSubmission" do		# used for notification alerts
-	return false		if cookies[ :user ] == nil	
+	return JSON.generate({ :show_it => false })		if cookies[ :user ] == nil	
 	
 	show_it = check_last_submission @@previous_time, @@time_interval
  	@@previous_time = Time.now.strftime( "%H%M" ).to_i

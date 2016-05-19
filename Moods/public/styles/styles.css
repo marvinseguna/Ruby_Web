@@ -40,7 +40,7 @@
 }
 .team
 {
-	width: 80px;
+	width: 300px;
 	border-top: none;
 	border-right: none;
 	border-left: none;
@@ -49,6 +49,7 @@
     border-radius: 7px;
 	outline: none;
 	background: lightblue;
+	font-size: 20px;
 }
 .emoticonsSpace
 {
@@ -68,11 +69,6 @@
     background-size: contain;
 	float: left;
 }
-.happyImage:hover
-{
-    opacity: 0.5;
-	cursor: pointer;
-}
 
 .sadImage
 {
@@ -83,11 +79,6 @@
     background-size: contain;
 	overflow: hidden;
 	float: left;
-}
-.sadImage:hover
-{
-    opacity: 0.5;
-	cursor: pointer;
 }
 
 .chillImage
@@ -100,11 +91,6 @@
 	overflow: hidden;
 	float: left;
 }
-.chillImage:hover
-{
-    opacity: 0.5;
-	cursor: pointer;
-}
 
 .angryImage
 {
@@ -116,12 +102,16 @@
 	overflow: hidden;
 	float: left;
 }
-.angryImage:hover
+
+.happyImage:hover, .sadImage:hover, .chillImage:hover, .angryImage:hover
 {
-    opacity: 0.5;
+	-webkit-transform:scale(1.5); /* Safari and Chrome */
+	-moz-transform:scale(1.5); /* Firefox */
+	-ms-transform:scale(1.5); /* IE 9 */
+	-o-transform:scale(1.5); /* Opera */
+	transform:scale(1.5);
 	cursor: pointer;
 }
-
 
 /* Moods viewing grid */
 .moodsGrid
