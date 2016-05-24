@@ -31,16 +31,15 @@
 .username
 {
 	font-size: 32px;
-	width: 300px;
 	text-align: center;
 	border-top: none;
 	border-right: none;
 	border-left: none;
 	outline: none;
+	display: inline-block;
 }
 .team
 {
-	width: 300px;
 	border-top: none;
 	border-right: none;
 	border-left: none;
@@ -50,6 +49,9 @@
 	outline: none;
 	background: lightblue;
 	font-size: 20px;
+	display: inline-block;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 .emoticonsSpace
 {

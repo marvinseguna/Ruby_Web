@@ -2,14 +2,20 @@
 ######################################## MOOD SAVE #########################################
 ############################################################################################
 def get_users_info
-	fileContents = File.read( 'db/data.dat' ).split( "\n" )
-	teams = []
-	users = []
-	fileContents.each{ |user|		#E.g. CS:Marvin Seguna
-		teams.push user.split( ':' )[0]
-		users.push user.split( ':' )[1]
+	File.read( 'db/data.dat' ).split "\n" 
+end
+
+def split_info( users )
+	user_info = []
+	users.each{ |user|		# CS:Marvin Seguna
+		user_info.push user.split( ':' )[1]
 	}
-	[ teams.uniq, users ]
+	user_info
+end
+
+def search_for_team( user )
+	res = File.foreach( 'db/data.dat' ).grep /#{user}/i
+	res.empty? ? '' : res.first.strip.split( ':' )[0] 
 end
 
 def get_user_info( option )
@@ -18,12 +24,10 @@ def get_user_info( option )
 
 	return user							if option == 1		# used to search for file name -> marvin_seguna.dat
 	return "db/#{team}/#{user}.dat"		if option == 2		# used to get path of user
-	return user 						if option == 3		# used to store user for first time -> in cookie mainly
-	return team							if option == 4		# retuns the team name without any special characters
 end
 
 def create_entry_and_file
-	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{get_user_info 4}:#{get_user_info 3}" }		# E.g. CS:Marvin Seguna
+	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{cookies[ :team ].downcase.capitalize}:#{cookies[ :user ].gsub( '+', ' ' )}" }		# E.g. CS:Marvin Seguna
 	File.new( get_user_info( 2 ), "a+" )
 end
 
@@ -43,7 +47,7 @@ end
 ############################### NOTIFICATION FUNCTIONALITY #################################
 ############################################################################################
 def check_for_valid_time( current_time )
-	[ 0700..1100, 1101..1500, 1501..2359 ].each{ |time_interval|
+	[ 0..1100, 1101..1500, 1501..2359 ].each{ |time_interval|
 		return time_interval		if time_interval.cover? current_time
 	}
 	nil

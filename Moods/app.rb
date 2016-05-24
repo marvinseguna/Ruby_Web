@@ -14,8 +14,8 @@ require 'json'
 
 set :cookie_options, :expires => Time.now + ( 3600 * 24 * 30 )		# cookies are valid for 1-day after they are set
 
-configure do
-	init # creation of files (if not found)
+configure do		# runs when server is started
+	init		# creation of files (if not found)
 end
 
 #before do # runs before every request
@@ -33,8 +33,13 @@ get "/GetPreviousInfo" do		# used in beginning to retrieve the name to place in 
 end
 
 get "/GetAllUsers" do		# used in beginning for autocomplete-functionality of input box
-	teams, @@users = get_users_info
-	JSON.generate({ :users => @@users, :teams => teams })
+	JSON.generate({ :users => get_users_info })
+end
+
+get "/GetTeam" do
+	username = params[ 'username' ]
+	team = search_for_team( username )
+	JSON.generate({ :team => team })
 end
 
 get "/SaveMood" do  # used when user selects a mood
@@ -46,10 +51,10 @@ get "/SaveMood" do  # used when user selects a mood
 
 	cookies[ :user ] = username
 	cookies[ :team ] = team
-
-	unless @@users.include? username
+	
+	users = split_info get_users_info
+	unless users.include? username
 		create_entry_and_file
-		@@users.push username
 	end
 
 	insert_entry mood
@@ -65,10 +70,11 @@ get "/GetMoodData" do		# used to retrieve information to show in the data grid
 	date_to = params[ 'dateTo' ]
 	team = ( params[ 'team' ] == '' ? 'CS' : params[ 'team' ] )
 	
-	teams, @@users = get_users_info
-	mood_data = get_moods @@users, team, date_from, date_to
+	@@users = get_users_info
+	users_info = split_info get_users_info
+	mood_data = get_moods users_info, team, date_from, date_to
 
-	JSON.generate({ :moodData => mood_data, :teams => teams })
+	JSON.generate({ :moodData => mood_data })
 end
 
 get "/Register" do

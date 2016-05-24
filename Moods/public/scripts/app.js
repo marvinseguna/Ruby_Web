@@ -1,15 +1,15 @@
-var currPage = 0;
-var timeInterval = 600000;
+var currPage = 0;		// indicates current page. 0=Moods, 1=Grid view
+var timeInterval = 600000;		// notification request timeout
+var users = null;		// info of all users stored in the system
+var currentUser = "";		// user retrieved from cookie
+var currentTeam = "";		// team retrieved from cookie
 
-//SPA functionality
-var app = angular.module( 'moodsApp', [
-  'ngRoute'
-]);
+init();
 
+//Single Page Application functionality
+var app = angular.module( 'moodsApp', ['ngRoute']);
 
-getNotificationPermission();
-
-//Page routing
+//--------------------Page routing--------------------------//
 app.config([ '$routeProvider', function ( $routeProvider ) {
   $routeProvider
     .when( "/", { templateUrl: "views/mood_choice.erb", controller: "MoodController" })
@@ -23,6 +23,7 @@ app.controller( 'MoodController', function () {
 	changeButtonMoods();
 	currPage = 0;
 });
+
 app.controller( 'DataViewController', function () {
 	initCalendars();
 	
@@ -30,13 +31,32 @@ app.controller( 'DataViewController', function () {
 	changeButtonHistory();
 	currPage = 1;
 });
+
 app.controller( 'InfoViewController', function() {
 	setTabHandler( currPage );
 });
-
-//Notification logic
-function getNotificationPermission() {
-	if( Notification.permission !== "granted" ) {
+//-----------------------------------------------------------------------------//
+function init() {
+	if( Notification.permission !== "granted" ) {		// Get notification permission for full functionality
 		Notification.requestPermission();
 	}
+	
+	$.getJSON( "/GetAllUsers" )
+	.done( function( usersInfo ) {
+		users = usersInfo.users;
+	})
+	.fail( function( usersInfo ) {
+		alert( 'GetAllusers: Failed to retrieve users from file!' );
+	});
+		
+	$.getJSON( "/GetPreviousInfo" )
+	.done( function( cookieUser ) {
+		currentUser = cookieUser.previous_user;
+		currentTeam = cookieUser.team;
+	})
+	.fail( function( usersInfo ) {
+		alert( 'GetPreviousInfo: Failed to retrieve cookies from server! Setting defaults.' );
+		currentUser = "Enter full name";
+		currentTeam = "CS";
+	});
 }

@@ -10,8 +10,8 @@
 		
 		<div class="greeting">
 			<p>How are you feeling today 
-			<sub contenteditable="true" id="team" onclick="highlightText('team')" class="team" data-bind="text: team"></sub>
-			<span contenteditable="true" id="user" onclick="highlightText('user')" class="username" data-bind="text: user"></span>
+			<sub id="team" class="team" data-bind="text: team"></sub>
+			<span contenteditable="true" id="user" onclick="highlightText('user')" class="username" onBlur="setProperInfo()" data-bind="text: user"></span>
 			?</p>
 		</div>
 			
