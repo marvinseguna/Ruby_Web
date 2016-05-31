@@ -48,7 +48,9 @@ function constructTable( moodData ) {
 }
 
 function addToHTML( dateRow, timeRow, rows, userRow, date, moods ) {
-	date = formatDate( date );
+	var year = date.substring( 0, 4 );
+	var month = date.substring( 4, 6 );
+	var day = date.substring( 6, 8 );
 	
 	if( moods == null || moods == '' ) {
 		if( rows == 2) { //processing first record
@@ -59,7 +61,7 @@ function addToHTML( dateRow, timeRow, rows, userRow, date, moods ) {
 	}
 	else {
 		if( rows == 2) { //processing first record
-			dateRow.innerHTML += ( DATECELL + ( "0" + date.getDate()).slice( -2 ) + "/" + ( "0" + date.getMonth()).slice( -2 ) + "/" + date.getFullYear() + "</th>" );
+			dateRow.innerHTML += ( DATECELL + ( day + "/" + month + "/" + year ) + "</th>" );
 		}
 		
 		Object.keys( moods ).sort().forEach( function( time ) { // to ensure that the times are sorted
@@ -72,14 +74,6 @@ function addToHTML( dateRow, timeRow, rows, userRow, date, moods ) {
 		});
 	}
 }
-
-function formatDate( date ) { // format: yyyymmdd
-	var year = date.substring( 0, 4 );
-	var month = date.substring( 4, 6 );
-	var day = date.substring( 6, 8 );
-	
-	return new Date( year, month, day );
-} 
 
 function getIconToDisplay( mood ) { // h, c, s, a
 	if( mood.toUpperCase() == 'H' ) {
