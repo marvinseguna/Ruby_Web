@@ -1,5 +1,5 @@
 var currPage = 0;		// indicates current page. 0=Moods, 1=Grid view
-var timeInterval = 600000;		// notification request timeout
+var timeInterval = 6000;		// notification request timeout
 var users = null;		// info of all users stored in the system
 var currentUser = "";		// user retrieved from cookie
 var currentTeam = "";		// team retrieved from cookie
@@ -19,12 +19,15 @@ app.config([ '$routeProvider', function ( $routeProvider ) {
 
 //Controllers for each page
 app.controller( 'MoodController', function () {
+	particlesJS.load('particles-js', 'assets/particles.json', function() {});
+
 	setAppViewModel()
 	changeButtonMoods();
 	currPage = 0;
 });
 
 app.controller( 'DataViewController', function () {
+	particlesJS.load('particles-js', 'assets/particles.json', function() {});
 	initCalendars();
 	
 	formGrid( null, null ); // default is 7-days
@@ -59,4 +62,17 @@ function init() {
 		currentUser = "Enter full name";
 		currentTeam = "CS";
 	});
+	
+	doNormalNotifications();
+}
+
+function doNormalNotifications() {
+	$.getJSON( "/GetLastSubmission" )
+		.done( function( showNotification ) {
+			if( showNotification.show_it ) {
+				notifyUser();
+			}
+		});
+		
+	setTimeout( doNormalNotifications, timeInterval );
 }

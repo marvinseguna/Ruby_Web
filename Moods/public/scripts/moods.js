@@ -14,13 +14,28 @@ function highlightText( id ) {		// used to highlight text in a span
 }
 
 function setProperInfo() {		// This function must be called on tab-out AND when pressing the mood to ensure that the team is set correctly.
-	username = document.getElementById( "user" ).innerHTML;
-	team = document.getElementById( "team" ).innerHTML;
-	if( username == '' || team == '' ) {		// changing the appviewmodel variables themselves was not updating UI element
+	full_user = document.getElementById( "user" ).innerHTML;
+	team = '';
+	username = '';
+	
+	if( full_user.indexOf( ':' ) > - 1 ) {
+		team = full_user.split( ':' )[0]
+		username = full_user.split( ':' )[1]
+		
+		document.getElementById( "user" ).innerHTML = username;
+		document.getElementById( "team" ).innerHTML = team;
+	}
+	else {
+		team = document.getElementById( "team" ).innerHTML;
+		username = fdocument.getElementById( "user" ).innerHTML;
+	}
+	
+	if( username === undefined || username == "" || team == "" ) {		// changing the appviewmodel variables themselves was not updating UI element
 		document.getElementById( "user" ).innerHTML = currentUser;
 		document.getElementById( "team" ).innerHTML = currentTeam;
 	}
 	else {
+		
 		for ( i = 0; i < users.length; i++ ) { 
 			user = users[i];
 			userInfo = user.split( ':' )[1]
@@ -37,10 +52,7 @@ function setProperInfo() {		// This function must be called on tab-out AND when 
 }
 
 function AcceptInput( mood ) {
-	setProperInfo();
-	
-	alert(appViewModel.user());
-	alert(appViewModel.team());
+	setProperInfo();  
 	
 	if( appViewModel.user() == '' || appViewModel.user() == 'Enter full name' || 
 		appViewModel.team() == '' ) {		//If username/team is not provided -> alert
@@ -88,9 +100,6 @@ function setAppViewModel() {
 		var element = $( '#team' )[ 0 ]; 
 		ko.cleanNode( element );
 	}
-	else {
-		doNormalNotifications();
-	}
 	
 	appViewModel = {
 		user: ko.observable( currentUser ),
@@ -100,7 +109,7 @@ function setAppViewModel() {
 	ko.applyBindings( appViewModel, document.getElementById( "user" ));
 	
 	$( "#user" ).autocomplete({ 
-		source: getUsers( users )
+		source: users
 	});
 	$( "#team" ).autocomplete({ 
 		source: getTeams( users )
@@ -111,13 +120,6 @@ function setAppViewModel() {
 	}
 }
 
-function getUsers( users ) {
-	var usersOnly = users.map( function( user ) {
-		return user.split( ":" )[1];
-	});
-	return usersOnly;
-}
-
 function getTeams( users ) {
 	var teams = users.map( function( user ) {
 		return user.split( ":" )[0];
@@ -126,17 +128,6 @@ function getTeams( users ) {
 		return teams.indexOf( team ) == pos;
 	});
 	return uniqueTeams;
-}
-
-function doNormalNotifications() {
-	$.getJSON( "/GetLastSubmission" )
-		.done( function( showNotification ) {
-			if( showNotification.show_it ) {
-				notifyUser();
-			}
-		});
-		
-	setTimeout( doNormalNotifications, timeInterval );
 }
 
 function notifyUser() {

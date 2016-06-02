@@ -1,3 +1,15 @@
+#particles-js {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	margin-top: 50px;
+	z-index: -1;
+}
+canvas {
+  display: block;
+  vertical-align: bottom;
+  position: absolute;
+}
 /* Used for top bar selector */
 .tabsContainer
 {
