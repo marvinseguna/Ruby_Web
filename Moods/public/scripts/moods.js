@@ -27,7 +27,7 @@ function setProperInfo() {		// This function must be called on tab-out AND when 
 	}
 	else {
 		team = document.getElementById( "team" ).innerHTML;
-		username = fdocument.getElementById( "user" ).innerHTML;
+		username = document.getElementById( "user" ).innerHTML;
 	}
 	
 	if( username === undefined || username == "" || team == "" ) {		// changing the appviewmodel variables themselves was not updating UI element

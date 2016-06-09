@@ -1,14 +1,14 @@
 {
 	"particles": {
 		"number": {
-			"value": 80,
+			"value": 40,
 			"density": {
 				"enable": true,
 				"value_area": 800
 			}
 		},
 		"color": {
-			"value": "#000000"
+			"value": [ "#FFFF00", "#00FF00", "#0000FF", "#FF00FF" ]
 		},
 		"shape": {
 			"type": "circle",
@@ -54,7 +54,7 @@
 		},
 		"move": {
 			"enable": true,
-			"speed": 6,
+			"speed": 2,
 			"direction": "none",
 			"random": false,
 			"straight": false,
@@ -75,7 +75,7 @@
 			},
 			"onclick": {
 				"enable": true,
-				"mode": "push"
+				"mode": "repulse"
 			},
 			"resize": true
 		},
