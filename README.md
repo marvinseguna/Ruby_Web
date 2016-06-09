@@ -1,3 +1,5 @@
+![picture alt](https://github.com/marvinseguna/Ruby_Web/blob/master/Moods/public/images/moods.png "Niko Niko Calendar example")
+
 ## Synopsis
 
 Niko-niko calendar, also known as smiley calendar or happiness index, is a **tool used to track the mood of a team**. Nikoniko is Japanese ideophone for smiling. You set up a calendar, and each team member tracks his/her mood after each working day with a smiley. General smileys include; happy :-), straight :-| or frowning smiley :-(. In regular intervals (like e.g. in each retrospective), the team gathers to **analyse the tracking results**. Here are a few examples in a team with five members, where the average over the last period was as follows: 
