@@ -2,26 +2,12 @@
 <html>
 	<body>
 		<title>Moods</title>
-		
-		<div id="particles-js"/>
-		
-		<div id="tabContainer" class="tabsContainer">
-			<a href="#/infoview" class="infoTab" data-toggle="tooltip" title="About"><img src="/images/info.png" width="40" height="40" style="float: left" alt="submit"/></a>
-			<div id="upperTabChoice" class="tabs"></div>
-		</div>
-		
-		<div class="greeting">
-			<p>How are you feeling today 
-			<sub id="team" class="team" data-bind="text: team"></sub>
-			<span contenteditable="true" spellcheck="false" id="user" onclick="highlightText('user')" class="username" onBlur="setProperInfo()" data-bind="text: user"></span>
-			?</p>
-		</div>
 			
 		<div class="emoticonsSpace">
-			<div class="happyImage" onclick="AcceptInput('happy')" height="150" width="200" data-toggle="tooltip" title="Happy"></div> <!-- to bind image name => #data-bind="attr:{ src: '/images/' + mood_happy }" -->
-			<div class="chillImage" onclick="AcceptInput('chill')" height="150" width="200" data-toggle="tooltip" title="Chill"></div>
-			<div class="sadImage" onclick="AcceptInput('sad')" height="150" width="200" data-toggle="tooltip" title="Sad"></div>
-			<div class="angryImage" onclick="AcceptInput('angry')" height="150" width="200" data-toggle="tooltip" title="Angry"></div>
+			<div class="happyImage" onclick="MOODS.acceptInput('happy')" height="150" width="200" data-toggle="tooltip" title="Happy"></div> <!-- to bind image name => #data-bind="attr:{ src: '/images/' + mood_happy }" -->
+			<div class="chillImage" onclick="MOODS.acceptInput('chill')" height="150" width="200" data-toggle="tooltip" title="Chill"></div>
+			<div class="sadImage" onclick="MOODS.acceptInput('sad')" height="150" width="200" data-toggle="tooltip" title="Sad"></div>
+			<div class="angryImage" onclick="MOODS.acceptInput('angry')" height="150" width="200" data-toggle="tooltip" title="Angry"></div>
 		</div>
 		
 		<div id="messageDiv" class="inspirationMessage"><p id="message"></p><p id="author" class="inspirationAuthor"></p></div>

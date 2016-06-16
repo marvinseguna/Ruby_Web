@@ -1,78 +1,104 @@
-var currPage = 0;		// indicates current page. 0=Moods, 1=Grid view
-var timeInterval = 600000;		// notification request timeout
-var users = null;		// info of all users stored in the system
-var currentUser = "";		// user retrieved from cookie
-var currentTeam = "";		// team retrieved from cookie
+/* ALL VARIABLES FOR THE APPLICATION */
+var MOODS = {};    //Main container to reduce global variables use
+MOODS.currPage = 0;    //0=Moods, 1=Grid view
+MOODS.timeInterval = 600000;    //Notification request timeout
+MOODS.users = [];    //All users retrieved from server
+MOODS.motivation = {
+	message: "", //Motivational message in moods page
+	author: ""   //Respective author
+};
+MOODS.app = angular.module( "moodsApp", ["ngRoute"] );    //Single Page Application functionality
+/* NOTIFICATION HANDLERS */
+MOODS.notification = function() {
+	return {
+		checkPermission: function() {
+			if( Notification.permission !== "granted" ) {
+				Notification.requestPermission();
+			}
+		},
+		checkForNotification: function() {
+			$.getJSON( "/GetLastSubmission" )
+			.done( function( notification ) {
+				if( notification.show ) {
+					MOODS.notification.notifyUser();
+				}
+			});   
+			setTimeout( MOODS.notification.checkForNotification, MOODS.timeInterval );
+		},
+		notifyUser: function() { 
+			options = {
+				body: 'Click here to be redirected to set your mood.',
+				tag: 'preset',
+				icon: 'images/logo.png'
+			};    
+			var notification = new Notification( 'Moods notifies how you feel ^_^', options );
+			notification.onclick = function() {
+				window.focus();
+				notification.close();
+			};
+		}
+	}
+}();
+/* EXECUTES FIRST STEPS FOR THE APPLICATION */
+MOODS.init = function() {
+	MOODS.notification.checkPermission();
+	MOODS.notification.checkForNotification();
+}();
+/* CHANGES ICON FOR DATA VIEW/MOODS */
+MOODS.changeStyles = function() {
+	return {
+		setUpperTab: function( url, imageSrc ) {
+			var htmlElement = "<a href=\"#/" + url + "\" class=\"buttonLinks\" data-toggle=\"tooltip\">";
+			htmlElement += "<img src=\"/images/" + imageSrc + ".png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
+			document.getElementById( "upperTab" ).innerHTML = htmlElement;
+		},
+		setDataViewButton: function() {
+			if( document.getElementById( "upperTab" ) != null ) {
+				MOODS.changeStyles.setUpperTab( "dataview", "time_machine_shaped" );
+			}   
+		},
+		setMoodsButton: function() {
+			if( document.getElementById( "upperTab" ) != null ) {
+				MOODS.changeStyles.setUpperTab( "", "logo" );
+			}   
+		},
+		disableGreeting: function() {
+			document.getElementById( "greeting" ).style.visibility = "hidden";
+		},
+		enableGreeting: function() {
+			document.getElementById( "greeting" ).style.visibility = "visible";
+		}
+	}
+}();
 
-init();
-
-//Single Page Application functionality
-var app = angular.module( 'moodsApp', ['ngRoute']);
-
-//--------------------Page routing--------------------------//
-app.config([ '$routeProvider', function ( $routeProvider ) {
-  $routeProvider
-    .when( "/", { templateUrl: "views/mood_choice.erb", controller: "MoodController" })
-    .when( "/dataview", { templateUrl: "views/data_view.erb", controller: "DataViewController" })
-    .when( "/infoview", { templateUrl: "views/info_view.erb", controller: "InfoViewController" });
+/* PAGE ROUTING */
+MOODS.app.config([ '$routeProvider', function ( $routeProvider ) {
+	$routeProvider
+		.when( "/", { templateUrl: "views/mood_choice.erb", controller: "MoodController" })
+		.when( "/dataview", { templateUrl: "views/data_view.erb", controller: "DataViewController" })
+		.when( "/infoview", { templateUrl: "views/info_view.erb", controller: "InfoViewController" });
 }]);
 
-//Controllers for each page
-app.controller( 'MoodController', function () {
+/* CONTROLLERS FUNCTIONS */
+MOODS.app.controller( 'MoodController', function () {
 	particlesJS.load('particles-js', 'assets/particles.json', function() {});
-
-	setAppViewModel()
-	changeButtonMoods();
-	currPage = 0;
+	MOODS.setMoodsPage();
+	MOODS.changeStyles.setDataViewButton();
+	MOODS.changeStyles.enableGreeting();
+	MOODS.currPage = 0;
 });
 
-app.controller( 'DataViewController', function () {
+MOODS.app.controller( 'DataViewController', function () {
 	particlesJS.load('particles-js', 'assets/particles.json', function() {});
-	initCalendars();
-	
-	formGrid( null, null ); // default is 7-days
-	changeButtonHistory();
-	currPage = 1;
+	MOODS.initCalendars();
+	MOODS.formGrid(); // default is 7-days
+	MOODS.changeStyles.setMoodsButton();
+	MOODS.changeStyles.disableGreeting();
+	MOODS.currPage = 1;
 });
 
-app.controller( 'InfoViewController', function() {
-	setTabHandler( currPage );
+MOODS.app.controller( 'InfoViewController', function() {
+	setTabHandler( MOODS.currPage );
 });
-//-----------------------------------------------------------------------------//
-function init() {
-	if( Notification.permission !== "granted" ) {		// Get notification permission for full functionality
-		Notification.requestPermission();
-	}
-	
-	$.getJSON( "/GetAllUsers" )
-	.done( function( usersInfo ) {
-		users = usersInfo.users;
-	})
-	.fail( function( usersInfo ) {
-		alert( 'GetAllusers: Failed to retrieve users from file!' );
-	});
-		
-	$.getJSON( "/GetPreviousInfo" )
-	.done( function( cookieUser ) {
-		currentUser = cookieUser.previous_user;
-		currentTeam = cookieUser.team;
-	})
-	.fail( function( usersInfo ) {
-		alert( 'GetPreviousInfo: Failed to retrieve cookies from server! Setting defaults.' );
-		currentUser = "Enter full name";
-		currentTeam = "CS";
-	});
-	
-	doNormalNotifications();
-}
 
-function doNormalNotifications() {
-	$.getJSON( "/GetLastSubmission" )
-		.done( function( showNotification ) {
-			if( showNotification.show_it ) {
-				notifyUser();
-			}
-		});
-		
-	setTimeout( doNormalNotifications, timeInterval );
-}
+MOODS.init;

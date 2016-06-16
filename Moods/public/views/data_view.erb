@@ -3,27 +3,16 @@
 	<body>
 		<title>Moods</title>
 		
-		<div id="particles-js"/>
-		
-		<div id="tabContainer" class="tabsContainer">
-			<a href="#/infoview" class="infoTab" data-toggle="tooltip" title="About"><img src="/images/info.png" width="40" height="40" style="float: left" alt="submit"/></a>
-			<div id="upperTabDataView" class="tabs">
-			</div>
-		</div>
-		
 		<div id="calendarContainer" class="calendarsArea">
 			<p class="calendarFilters">From: <input type="text" id="datepickerFrom" style="text-align: center;"></p>
 			<p class="calendarFilters">To: <input type="text" id="datepickerTo" style="text-align: center;"></p>
 			<p class="calendarFilters">Team: <input type="text" id="teamFilter" style="width: 60px;text-align: center;"></p>
-			<button class="filterMoods" onclick="filterMoods()">Filter</button>
+			<button class="filterMoods" onclick="MOODS.filterMoods()">Filter</button>
 		</div>
 		
 		<div class="outer">
 			<div class="inner">
-
-				<table id="moodsTable" class="moodsGrid">
-					
-				</table>
+				<table id="moodsTable" class="moodsGrid"></table>
 			</div>
 		</div>
 		

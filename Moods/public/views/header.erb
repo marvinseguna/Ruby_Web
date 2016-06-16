@@ -2,5 +2,19 @@
 <html>
 	<body>
 		<title>Moods</title>
+		
+		<div id="particles-js"/>
+		
+		<div id="tabContainer" class="tabsContainer">
+			<a href="#/infoview" class="infoTab" data-toggle="tooltip" title="About"><img src="/images/info.png" width="40" height="40" style="float: left" alt="submit"/></a>
+			<div id="upperTab" class="tabs"></div>
+		</div>
+		
+		<div id="greeting" class="greeting">
+			<p>How are you feeling today 
+			<sub id="team" class="team" data-bind="text: team"></sub>
+			<span contenteditable="true" spellcheck="false" id="user" onclick="MOODS.highlightSpanText('user')" class="username" onBlur="MOODS.setUserAndTeam()" data-bind="text: user"></span>
+			?</p>
+		</div>
 	</body>
 </html>

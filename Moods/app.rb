@@ -26,14 +26,10 @@ get "/" do
 	erb :index
 end
 
-get "/GetPreviousInfo" do		# used in beginning to retrieve the name to place in the input box
+get "/GetUserInfo" do		# Used in beginning
 	user = ( cookies[ :user ] == nil ? "Enter full name" : cookies[ :user ] )
 	team = ( cookies[ :team ] == nil ? "CS" : cookies[ :team ] )
-	JSON.generate({ :previous_user => user, :team => team })
-end
-
-get "/GetAllUsers" do		# used in beginning for autocomplete-functionality of input box
-	JSON.generate({ :users => get_users_info })
+	JSON.generate({ :users => get_users_info, :user => user, :team => team })
 end
 
 get "/GetTeam" do
@@ -68,7 +64,7 @@ end
 get "/GetMoodData" do		# used to retrieve information to show in the data grid
 	date_from = params[ 'dateFrom' ]
 	date_to = params[ 'dateTo' ]
-	team = ( params[ 'team' ] == '' ? 'CS' : params[ 'team' ] )
+	team = ( params[ 'team' ] == '' ? ( cookies[ :team ] == nil ? 'CS' : cookies[ :team ] ) : params[ 'team' ] )
 	
 	@@users = get_users_info
 	users_info = split_info get_users_info
