@@ -52,21 +52,29 @@ MOODS.changeStyles = function() {
 			htmlElement += "<img src=\"/images/" + imageSrc + ".png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
 			document.getElementById( "upperTab" ).innerHTML = htmlElement;
 		},
+		checkIfElementExists: function( elementId ){
+			var exists = document.getElementById( elementId ) == null ? false : true;
+			return exists;
+		},
 		setDataViewButton: function() {
-			if( document.getElementById( "upperTab" ) != null ) {
-				MOODS.changeStyles.setUpperTab( "dataview", "time_machine_shaped" );
-			}   
+			MOODS.changeStyles.checkIfElementExists( "upperTab" ) ? 
+				MOODS.changeStyles.setUpperTab( "dataview", "time_machine_shaped" ) : 
+				setTimeout( MOODS.changeStyles.setDataViewButton, 200 );
 		},
 		setMoodsButton: function() {
-			if( document.getElementById( "upperTab" ) != null ) {
-				MOODS.changeStyles.setUpperTab( "", "logo" );
-			}   
+			MOODS.changeStyles.checkIfElementExists( "upperTab" ) ? 
+				MOODS.changeStyles.setUpperTab( "", "logo" ) : 
+				setTimeout( MOODS.changeStyles.setMoodsButton, 200 );
 		},
 		disableGreeting: function() {
-			document.getElementById( "greeting" ).style.visibility = "hidden";
+			MOODS.changeStyles.checkIfElementExists( "greeting" ) ? 
+				( document.getElementById( "greeting" ).style.visibility = "hidden" ) : 
+				setTimeout( MOODS.changeStyles.disableGreeting, 200 );
 		},
 		enableGreeting: function() {
-			document.getElementById( "greeting" ).style.visibility = "visible";
+			MOODS.changeStyles.checkIfElementExists( "greeting" ) ? 
+				( document.getElementById( "greeting" ).style.visibility = "visible" ) : 
+				setTimeout( MOODS.changeStyles.enableGreeting, 200 );
 		}
 	}
 }();
