@@ -1,99 +1,63 @@
+def init
+	File.open( 'db/data.dat', 'a+' ){}		if !File.file?( 'db/data.dat' )
+	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}		if !File.file?( 'db/messages.dat' ) # write a sample message
+end
+
 ############################################################################################
 ######################################## MOOD SAVE #########################################
 ############################################################################################
-def get_users_info
-	File.read( 'db/data.dat' ).split "\n" 
+def get_users_data( split_users = false )
+	users_teams = File.read( 'db/data.dat' ).split "\n" 
+	return users_teams        if !split_users
+	
+	users_teams.map{ | user_team | user_team.split( ':' )[1] }
 end
 
-def split_info( users )
-	user_info = []
-	users.each{ |user|		# CS:Marvin Seguna
-		user_info.push user.split( ':' )[1]
-	}
-	user_info
-end
-
-def search_for_team( user )
-	res = File.foreach( 'db/data.dat' ).grep /#{user}/i
-	res.empty? ? '' : res.first.strip.split( ':' )[0] 
-end
-
-def get_user_info( option )
+def get_user_file_path
 	user = cookies[ :user ].downcase.gsub( '+', '_' ).gsub( ' ', '_' )
-	team = cookies[ :team ].upcase.gsub( /[^0-9A-Za-z]/ , '' )
-
-	return user							if option == 1		# used to search for file name -> marvin_seguna.dat
-	return "db/#{team}/#{user}.dat"		if option == 2		# used to get path of user
+	team = cookies[ :team ].gsub( /[^0-9A-Za-z]/ , '' )
+	
+	"db/#{team}/#{user}.dat"
 end
+
+def capitalize_user( user )
+	user.downcase.split.map( &:capitalize ).join ' '
+end 
 
 def create_entry_and_file
-	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{cookies[ :team ].downcase.capitalize}:#{cookies[ :user ].gsub( '+', ' ' )}" }		# E.g. CS:Marvin Seguna
-	File.new( get_user_info( 2 ), "a+" )
+	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{cookies[ :team ]}:#{capitalize_user( cookies[ :user ].gsub( '+', ' ' ))}" }		# E.g. CS:Marvin Seguna
+	File.new( get_user_file_path, "a+" )
 end
 
 def insert_entry( mood )
-	File.open( get_user_info( 2 ), 'a+' ) { |f| 
+	File.open( get_user_file_path, 'a+' ) { |f| 
 		f.puts "#{Time.now.strftime( "%Y%m%d" )},#{Time.now.strftime( "%H%M" )},#{mood[ 0 ]}"		# E.g. 20160707,1818,h
 	}
-end
-
-def init
-	File.open( 'db/data.dat', 'a+' ){}		if !File.file?( 'db/data.dat' )
-	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}		if !File.file?( 'db/messages.dat' ) 		# write a sample message
 end
 
 
 ############################################################################################
 ############################### NOTIFICATION FUNCTIONALITY #################################
 ############################################################################################
-def check_for_valid_time( current_time )
+def get_time_range( current_time )
 	[ 0..1100, 1101..1500, 1501..2359 ].each{ |time_interval|
 		return time_interval		if time_interval.cover? current_time
 	}
-	nil
-end
-def check_last_submission( previous_time, time_interval )
-	#skip if last request was sent longer than 10 minutes ago
-	current_time = Time.now.strftime( "%H%M" ).to_i
-	current_date = Time.now.strftime( "%Y%m%d" )
-	return false		if current_time - previous_time > time_interval + 1 # +1 minute to cater for the request time
-	
-	#check if current time falls within the defined time ranges
-	time_range = check_for_valid_time current_time
-	return false		if time_range == nil
-	
-	last_submission = IO.readlines( get_user_info( 2 )).last
-	return true		if last_submission.empty? # Nothing is written in the file yet
-	
-	user_date = last_submission.split( ',' ).first
-	user_time = last_submission.split( ',' )[ 1 ].to_i
-	
-	return false	if user_date == current_date and time_range.cover? user_time
-	
-	true
 end
 
-def create_notification_thread( time_interval )
-	previous_time = 0000
-	Thread.new{
-		while true
-			push_req		if check_last_submission( previous_time, time_interval )
-			previous_time = Time.now.strftime( "%H%M" ).to_i
-			
-			sleep( time_interval * 60 ) 
-		end
-	}
-end
-def push_req
-	registration_id = cookies[ :registration_id ]
-	registration_id.gsub!( '%3A', ':' ) 
-	registration_id.gsub!( '%2F', '/' )
-	registration_id.gsub!( 'https://android.googleapis.com/gcm/send/', '' )
+def check_last_submission()
+	last_submission = IO.readlines( get_user_file_path ).last
+	return true		if last_submission.empty? # Nothing is written in the file yet
 	
-	gcm = GCM.new( "AIzaSyDF_wvs9YWlrP5g2X7kThbD_O1s5nmvwoY" )
-	reg_tokens = [ registration_id ]
-	options = { :data => { :title =>"foobar", :body => "this is a longer message" } }
-	response = gcm.send( reg_tokens, options )
+	current_time = get_time_range Time.now.strftime( "%H%M" ).to_i
+	current_date = Time.now.strftime( "%Y%m%d" )
+	
+	user_date = last_submission.split( ',' ).first
+	user_time = get_time_range last_submission.split( ',' )[ 1 ].to_i
+	
+	return false	if user_date == current_date and current_time == user_time
+	
+	true
 end
 
 
@@ -194,3 +158,30 @@ def cut_moods( moods, cutoff )
 	}
 	moods
 end
+
+
+############################################################################################
+############################## SERVICE WORKER FUNCTIONALITY ################################
+############################################################################################
+# def create_notification_thread( time_interval )
+	# previous_time = 0000
+	# Thread.new{
+		# while true
+			# push_req		if check_last_submission( previous_time, time_interval )
+			# previous_time = Time.now.strftime( "%H%M" ).to_i
+			
+			# sleep( time_interval * 60 ) 
+		# end
+	# }
+# end
+# def push_req
+	# registration_id = cookies[ :registration_id ]
+	# registration_id.gsub!( '%3A', ':' ) 
+	# registration_id.gsub!( '%2F', '/' )
+	# registration_id.gsub!( 'https://android.googleapis.com/gcm/send/', '' )
+	
+	# gcm = GCM.new( "AIzaSyDF_wvs9YWlrP5g2X7kThbD_O1s5nmvwoY" )
+	# reg_tokens = [ registration_id ]
+	# options = { :data => { :title =>"foobar", :body => "this is a longer message" } }
+	# response = gcm.send( reg_tokens, options )
+# end

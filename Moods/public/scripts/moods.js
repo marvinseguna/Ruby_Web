@@ -104,8 +104,7 @@ MOODS.getTeams = function( users ) {
 	return uniqueTeams;
 }
 
-
-//Functionality for notifications
+// Service Worker method
 // function registerSW() {
 	
 	// var isFirefox = typeof InstallTrigger !== 'undefined';
