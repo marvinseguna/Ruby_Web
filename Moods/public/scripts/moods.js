@@ -11,7 +11,7 @@ MOODS.highlightSpanText = function( id ) {
 /* VALIDATES USER AND TEAM VALUES */
 MOODS.setUserAndTeam = function() {
 	var parseUser = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
-	user = document.getElementById( "user" ).innerHTML;
+	var user = document.getElementById( "user" ).innerHTML;
 	previousTeam = MOODS.appViewModel.team();
 	
 	var parsedUser = parseUser.exec( user );

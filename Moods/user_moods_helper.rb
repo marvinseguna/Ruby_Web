@@ -1,6 +1,11 @@
 def init
-	File.open( 'db/data.dat', 'a+' ){}		if !File.file?( 'db/data.dat' )
-	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}		if !File.file?( 'db/messages.dat' ) # write a sample message
+	File.open( 'db/data.dat', 'a+' ){}           if !File.file?( 'db/data.dat' )
+	File.open( 'db/performance.dat', 'a+' ){}    if !File.file?( 'db/performance.dat' )
+	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}    if !File.file?( 'db/messages.dat' ) # write a sample message
+	
+	set :dates, IO.readlines( 'db/performance.dat' ).map{ |date| date.chomp }    # saved last 7 dates to improve performance
+	set :users, get_users_data( true )                  # users without teams
+	set :users_teams, get_users_data( false )           # users with teams
 end
 
 ############################################################################################
@@ -13,9 +18,9 @@ def get_users_data( split_users = false )
 	users_teams.map{ | user_team | user_team.split( ':' )[1] }
 end
 
-def get_user_file_path
-	user = cookies[ :user ].downcase.gsub( '+', '_' ).gsub( ' ', '_' )
-	team = cookies[ :team ].gsub( /[^0-9A-Za-z]/ , '' )
+def get_user_file_path( user = nil, team = nil )
+	user = ( user == nil ? cookies[ :user ] : user ).downcase.gsub( '+', '_' ).gsub( ' ', '_' )
+	team = ( team == nil ? cookies[ :team ] : team ).gsub( /[^0-9A-Za-z]/ , '' )
 	
 	"db/#{team}/#{user}.dat"
 end
@@ -35,6 +40,13 @@ def insert_entry( mood )
 	}
 end
 
+def update_dates
+	date = Time.now.strftime '%Y%m%d'
+	return if settings.dates.include? date
+	
+	settings.dates.push date
+	File.open( 'db/performance.dat', 'a+' ) { |f| f.puts date }
+end
 
 ############################################################################################
 ############################### NOTIFICATION FUNCTIONALITY #################################
@@ -60,79 +72,64 @@ def check_last_submission()
 	true
 end
 
-
 ############################################################################################
 ################################ DATA VIEW FUNCTIONALITY ###################################
 ############################################################################################
-def get_moods( users, team, date_from, date_to )
+def get_grid_dates( date_from, date_to )
+	if date_from == '' or date_to == ''
+		settings.dates.last 7
+	else
+		filter_dates = Array ( date_from..date_to )
+		settings.dates & filter_dates
+	end
+end
+
+def fill_default_moods( filter_dates, date_from, date_to )
+	defaults = {}
+	first_date = ''
+	last_date = ''
+	
+	if date_from == '' or date_to == ''
+		first_date = Date.strptime( filter_dates.first, '%Y%m%d')
+		last_date = Date.strptime( filter_dates.last, '%Y%m%d')
+	else
+		first_date = Date.strptime( date_from, '%Y%m%d')
+		last_date = Date.strptime( date_to, '%Y%m%d')
+	end
+	
+	while first_date <= last_date
+		first_date_str = first_date.strftime '%Y%m%d'
+		
+		if filter_dates.include? first_date_str
+			defaults[first_date_str] = { '0900' => '', '1300' => '', '1700' => '' }
+		else
+			defaults[first_date_str] = nil
+		end
+		first_date += 1
+	end
+	defaults
+end
+
+def get_moods( team, date_from = nil, date_to = nil )
 	moods = {}
-	@empty_dates = {}
+	filter_dates = get_grid_dates date_from, date_to
+	filter_dates_str = filter_dates.join '|'
 	
-	if date_from != ''		# filter
-		begin
-			date_from = (( Date.parse date_from ).strftime '%Y%m%d' ).to_i
-			date_to = (( Date.parse date_to ).strftime '%Y%m%d' ).to_i
+	settings.users_teams.each{ |team_user| 
+		user_team, user = team_user.split( ':' )
+		next if user_team != team
+		
+		file = get_user_file_path user, user_team
+		moods[user] = fill_default_moods filter_dates, date_from, date_to
+		
+		File.readlines( file ).grep( /#{filter_dates_str}/ ).each{ |rec|
+			rec_date, rec_time, rec_mood = rec.split ','
+			rec_time = get_time_slot rec_time.to_i
 			
-			users.each{ |user|
-				moods_info = get_user_moods team, user, date_from, date_to
-				moods[ user ] = moods_info		if moods_info != ''		# '' implies that user does not belong to the selected team
-			}
-			cut_moods moods, false
-		rescue
-			puts "get_moods: Error when parsing dates!! date_from: #{date_from}, date_to: #{date_to}.\nDefaulting to 7-days"
-			get_moods users, team, '', ''
-		end
-	else # 7-days (DEFAULT)
-		users.each{ |user|
-			moods_info = get_user_moods team, user
-			moods[ user ] = moods_info		if moods_info != ''		# '' implies that user does not belong to the selected team
+			moods[user][rec_date][rec_time] = rec_mood.chomp
 		}
-		cut_moods moods, true		# set empty dates to nil and including only common dates
-	end
-end
-
-def get_user_moods( team, user, date_from = 0, date_to = 99991231 )
-	user = ( user.gsub '+', '_' ).gsub( ' ', '_' ).downcase
-	return ''		if !File.file?( "db/#{team}/#{user}.dat" )		# user is not found in team directory
-	
-	date = 0
-	date_to == 99991231 ? ( date = Time.now.strftime( '%Y%m%d' ).to_i ) : ( date = date_to )
-	@empty_dates[ date ] = false		if !@empty_dates.include? date
-	moods = { date => { '0900' => '', '1300' => '', '1700' => '' }}
-	incrementor = 0
-	
-	IO.readlines( "db/#{team}/#{user}.dat" ).reverse.each{ |line| #20160419,2327,h
-		next		if line == ''
-		date_in_file = line.split( ',' ).first.to_i
-		next		if date_in_file > date_to
-		
-		if date_from == 0
-			incrementor += 1		if date_in_file != date and moods.length != 1		# for first one, it doesn't apply
-			break					if incrementor == 6		# Default: 7-days
-		end
-		
-		moods, date = increment_date date, moods, date_in_file, date_from
-		break		if date_in_file < date_from
-		
-		time = get_time_slot line.split( ',' )[ 1 ].to_i
-		if moods[ date ][ time ] == ''
-			moods[ date ][ time ] = line.split( ',' ).last.chomp		# to get the mood
-			@empty_dates[ date ] = true
-		end
 	}
-	
-	moods, date = increment_date date, moods, date_from, date_from		if date_from != 0		# then the dates were passed as a filter
 	moods
-end
-
-def increment_date( date, moods, comparableDate, date_from )
-	while date != comparableDate		# Keep looping until the date-variable matches that found in the file
-		date = ((( Date.parse date.to_s ) - 1 ).strftime '%Y%m%d').to_i
-		break		if date < date_from
-		moods[ date ] = { '0900' => '', '1300' => '', '1700' => '' }
-		@empty_dates[ date ] = false		if !@empty_dates.include? date
-	end
-	[ moods, date ]
 end
 
 def get_time_slot( time )
@@ -141,22 +138,6 @@ def get_time_slot( time )
 	when 1101..1500 then return '1300'
 	when 1501..2359 then return '1700'
 	end
-end
-
-def cut_moods( moods, cutoff )
-	dates = []
-	moods.each{ |user, data| dates.empty? ? ( dates = data.keys ) : ( dates = dates & data.keys ) }
-	
-	moods.each{ |user, data|
-		data.each{ |date, time_moods| 
-			if !dates.include? date and cutoff
-				moods[ user ].delete date		# to eliminate any dates which went beyond the default for a given user
-			elsif @empty_dates.include? date
-				moods[ user ][ date ] = nil		if !@empty_dates[ date ]		# implies that no input was given on the specific day, hence delete
-			end
-		}
-	}
-	moods
 end
 
 
