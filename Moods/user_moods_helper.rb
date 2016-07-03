@@ -79,6 +79,9 @@ def get_grid_dates( date_from, date_to )
 	if date_from == '' or date_to == ''
 		settings.dates.last 7
 	else
+		date_from = ( Date.parse date_from ).strftime '%Y%m%d'
+		date_to = ( Date.parse date_to ).strftime '%Y%m%d'
+		
 		filter_dates = Array ( date_from..date_to )
 		settings.dates & filter_dates
 	end
@@ -90,11 +93,11 @@ def fill_default_moods( filter_dates, date_from, date_to )
 	last_date = ''
 	
 	if date_from == '' or date_to == ''
-		first_date = Date.strptime( filter_dates.first, '%Y%m%d')
-		last_date = Date.strptime( filter_dates.last, '%Y%m%d')
+		first_date = Date.strptime( filter_dates.first, '%Y%m%d' )
+		last_date = Date.strptime( filter_dates.last, '%Y%m%d' )
 	else
-		first_date = Date.strptime( date_from, '%Y%m%d')
-		last_date = Date.strptime( date_to, '%Y%m%d')
+		first_date = Date.strptime((( Date.parse date_from ).strftime '%Y%m%d' ), '%Y%m%d' )
+		last_date = Date.strptime((( Date.parse date_to ).strftime '%Y%m%d' ), '%Y%m%d' )
 	end
 	
 	while first_date <= last_date

@@ -78,11 +78,15 @@ MOODS.formGrid = function( dateFrom = null, dateTo = null ) { //default is 1-wee
 		alert( "formGrid: users were previously not retrieved correctly! Kindly refresh the page." );
 		return;
 	}
-	//here
+	
 	var teamFilter = '';
 	if( MOODS.appViewModel !== undefined ){
 		teamFilter = document.getElementById( 'teamFilter' ).value || MOODS.appViewModel.team() || 'CS';
 	}
+	else {
+		teamFilter = document.getElementById( 'teamFilter' ).value || 'CS';
+	}
+	document.getElementById( 'teamFilter' ).value = teamFilter;
 	
 	var data = { dateFrom: dateFrom,  dateTo: dateTo, team: teamFilter }
 	$.getJSON( "/GetMoodData", data )

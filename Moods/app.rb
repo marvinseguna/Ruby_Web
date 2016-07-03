@@ -57,12 +57,7 @@ get "/GetMoodData" do		# used to retrieve information to show in the data grid
 	date_from = date_from == '' ? nil : date_from
 	date_to = date_from == '' ? nil : date_to
 	
-	t1 = Time.now
 	mood_data = get_moods team, date_from, date_to
-	t2 = Time.now
-	delta = t2 - t1 # in seconds
-	
-	puts "time taken: #{delta}"
 	
 	JSON.generate({ :moodData => mood_data })
 end

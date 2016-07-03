@@ -14,6 +14,10 @@ MOODS.setUserAndTeam = function() {
 	var user = document.getElementById( "user" ).innerHTML;
 	previousTeam = MOODS.appViewModel.team();
 	
+	/* If the values are found for the AppViewModel variables, no changes will be exeucted from Knockout */
+	MOODS.appViewModel.team('');
+	MOODS.appViewModel.user('');
+	
 	var parsedUser = parseUser.exec( user );
 	MOODS.appViewModel.team( parsedUser[1] );
 	MOODS.appViewModel.user( parsedUser[2] );
