@@ -8,10 +8,16 @@ MOODS.highlightSpanText = function( id ) {
 	sel.removeAllRanges();
 	sel.addRange( range );
 };
+/* HANDLER FOR USERNAME TO DISABLE ENTER KEY */
+MOODS.checkKey = function( e ) {
+	if( e.keyCode == 13 ) {
+		e.preventDefault();
+	}
+}
 /* VALIDATES USER AND TEAM VALUES */
 MOODS.setUserAndTeam = function() {
 	var parseUser = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
-	var user = document.getElementById( "user" ).innerHTML;
+	var user = $.trim( document.getElementById( "user" ).innerHTML );
 	previousTeam = MOODS.appViewModel.team();
 	
 	/* If the values are found for the AppViewModel variables, no changes will be exeucted from Knockout */
@@ -25,6 +31,8 @@ MOODS.setUserAndTeam = function() {
 	if( MOODS.appViewModel.team() == '' ) {
 		MOODS.appViewModel.team( previousTeam );
 	}
+	document.getElementById( "user" ).innerHTML = MOODS.appViewModel.user();
+	document.getElementById( "team" ).innerHTML = MOODS.appViewModel.team();
 }
 /* SUBMITS MOOD TO SERVER */
 MOODS.acceptInput = function( mood ) {
