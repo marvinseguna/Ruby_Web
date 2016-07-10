@@ -9,35 +9,37 @@ MOODS.highlightSpanText = function( id ) {
 	sel.addRange( range );
 };
 /* HANDLER FOR USERNAME TO DISABLE ENTER KEY */
-MOODS.checkKey = function( e ) {
-	if( e.keyCode == 13 ) {
+MOODS.userKeyDown = function( e ) {
+	if( e.keyCode == 13 ) { /* Enter */
 		e.preventDefault();
 	}
 }
 /* VALIDATES USER AND TEAM VALUES */
 MOODS.setUserAndTeam = function() {
 	var parseUser = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
-	var user = $.trim( document.getElementById( "user" ).innerHTML );
+	var user = document.getElementById( "user" ).innerHTML;
 	previousTeam = MOODS.appViewModel.team();
+	previousUser = MOODS.appViewModel.user();
 	
-	/* If the values are found for the AppViewModel variables, no changes will be exeucted from Knockout */
+	/* If the values are found for the AppViewModel variables, no changes will be executed from Knockout */
 	MOODS.appViewModel.team('');
 	MOODS.appViewModel.user('');
 	
 	var parsedUser = parseUser.exec( user );
-	MOODS.appViewModel.team( parsedUser[1] );
-	MOODS.appViewModel.user( parsedUser[2] );
+	if( parsedUser != null ) {
+		MOODS.appViewModel.team( parsedUser[1] );
+		MOODS.appViewModel.user( parsedUser[2] );
+	}
 	
 	if( MOODS.appViewModel.team() == '' ) {
 		MOODS.appViewModel.team( previousTeam );
 	}
-	document.getElementById( "user" ).innerHTML = MOODS.appViewModel.user();
-	document.getElementById( "team" ).innerHTML = MOODS.appViewModel.team();
+	if( MOODS.appViewModel.user() == '' ) {
+		MOODS.appViewModel.user( previousUser );
+	}
 }
 /* SUBMITS MOOD TO SERVER */
 MOODS.acceptInput = function( mood ) {
-	MOODS.setUserAndTeam();  
-	
 	if( MOODS.appViewModel.user() == '' || MOODS.appViewModel.user() == 'Full name' || MOODS.appViewModel.team() == '' ) {        // If username/team is not provided -> alert
 		alert( 'Kindly provide full name (e.g. Joe Smith) and the respective team before selecting mood!' );
 		MOODS.appViewModel.user( "Full name" );
@@ -69,10 +71,22 @@ MOODS.AppViewModel = function() {
 }
 MOODS.setupHTMLElements = function() {
 	$( "#user" ).autocomplete({ 
-		source: MOODS.users
+		minLength: 0,
+		source: MOODS.users,
+		select: function( e, ui ) {
+			MOODS.appViewModel.user( ui.item.value );
+		}
+	}).focus(function() {
+		$(this).autocomplete("search", $(this).val());
 	});
-	$( "#team" ).autocomplete({ 
-		source: MOODS.getTeams( MOODS.users )
+	$( "#team" ).autocomplete({
+		minLength: 0,
+		source: MOODS.getTeams( MOODS.users ),
+		select: function( e, ui ) {
+			MOODS.appViewModel.team( ui.item.value );
+		}
+    }).focus(function() {
+		$(this).autocomplete("search", $(this).val());
 	});
 	
 	if( MOODS.appViewModel.user() == 'Full name' ) {        // this implies that cookie is not / was never set!

@@ -48,7 +48,7 @@ MOODS.init = function() {
 MOODS.changeStyles = function() {
 	return {
 		setUpperTab: function( url, imageSrc ) {
-			var htmlElement = "<a href=\"#/" + url + "\" class=\"buttonLinks\" data-toggle=\"tooltip\">";
+			var htmlElement = "<a tabindex=\"7\" href=\"#/" + url + "\" class=\"buttonLinks\" data-toggle=\"tooltip\">";
 			htmlElement += "<img src=\"/images/" + imageSrc + ".png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
 			document.getElementById( "upperTab" ).innerHTML = htmlElement;
 		},
