@@ -37,7 +37,7 @@ canvas {
 	font-size: 32px;
 	margin-left: auto;
 	margin-top: 70px;
-	width: 800px;
+	width: 900px;
 	margin-right: auto;
 }
 .username
@@ -49,6 +49,7 @@ canvas {
 	border-left: none;
 	outline: none;
 	display: inline-block;
+	width:50px;
 }
 .team
 {
@@ -69,7 +70,7 @@ canvas {
 {
 	margin-left: auto;
 	margin-top: 70px;
-	width: 800px;
+	width: 900px;
 	margin-right: auto;
 }
 

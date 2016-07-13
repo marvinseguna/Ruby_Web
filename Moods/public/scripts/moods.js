@@ -1,29 +1,31 @@
-/* HIGHLIGHTS ALL TEXT INSIDE SPAN ELEMENT */
-MOODS.highlightSpanText = function( id ) {        
-	var span = document.getElementById( id );
-	var range = document.createRange();
-	range.setStartBefore( span.firstChild );
-	range.setEndAfter( span.lastChild );
-	var sel = window.getSelection();
-	sel.removeAllRanges();
-	sel.addRange( range );
-};
-/* HANDLER FOR USERNAME TO DISABLE ENTER KEY */
-MOODS.userKeyDown = function( e ) {
-	if( e.keyCode == 13 ) { /* Enter */
-		e.preventDefault();
+/* ENLARGE INPUT TEXT AS REQUIRED */
+MOODS.setUserInputWidth = function() {
+	var input = document.getElementById( 'user' );
+	input.onkeypress = input.onkeydown = input.onkeyup = function(){
+		setTimeout(function(){
+			var x = document.getElementById( 'user' ).value;
+			
+			if( x.length < 8 ) {
+				document.getElementById( 'user' ).style.width = "" + ( x.length * 25 ).toString() + "px";
+			}
+			else {
+				document.getElementById( 'user' ).style.width = "" + ( x.length * 17 ).toString() + "px";
+			}
+		}, 1);
 	}
-}
+	var x = document.getElementById( 'user' ).value;
+	document.getElementById( 'user' ).style.width = "" + ( x.length * 17 ).toString() + "px";
+};
 /* VALIDATES USER AND TEAM VALUES */
 MOODS.setUserAndTeam = function() {
 	var parseUser = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
-	var user = document.getElementById( "user" ).innerHTML;
+	var user = document.getElementById( "user" ).value;
 	previousTeam = MOODS.appViewModel.team();
 	previousUser = MOODS.appViewModel.user();
 	
 	/* If the values are found for the AppViewModel variables, no changes will be executed from Knockout */
-	MOODS.appViewModel.team('');
-	MOODS.appViewModel.user('');
+	MOODS.appViewModel.team('foo');
+	MOODS.appViewModel.user('foo');
 	
 	var parsedUser = parseUser.exec( user );
 	if( parsedUser != null ) {
@@ -92,8 +94,10 @@ MOODS.setupHTMLElements = function() {
 	if( MOODS.appViewModel.user() == 'Full name' ) {        // this implies that cookie is not / was never set!
 		document.getElementById( 'team' ).setAttribute( "contentEditable", true );
 	}
-	document.getElementById( 'user' ).innerHTML = MOODS.appViewModel.user();
+	document.getElementById( 'user' ).value = MOODS.appViewModel.user();
 	document.getElementById( 'team' ).innerHTML = MOODS.appViewModel.team();
+	
+	MOODS.setUserInputWidth();
 }
 MOODS.setMoodsPage = function() {		
 	$( "#message" ).html( MOODS.motivation.message ).fadeTo( 100, 0.4 );
