@@ -6,7 +6,7 @@ require 'messages_helper'
 require 'gcm'
 require 'json'
 
-set :cookie_options, :expires => Time.now + ( 3600 * 24 * 30 )        # cookies are valid for 1-day after they are set
+set :cookie_options, :expires => Time.now + ( 3600 * 24 * 30 * 12 )        # cookies are valid for 1-day after they are set
 
 configure do   # runs when server is started
 	init       # creation of files (if not found)
