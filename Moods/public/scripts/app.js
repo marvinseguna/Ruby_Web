@@ -3,6 +3,7 @@ var MOODS = {};    //Main container to reduce global variables use
 MOODS.currPage = 0;    //0=Moods, 1=Grid view
 MOODS.timeInterval = 600000;    //Notification request timeout
 MOODS.users = [];    //All users retrieved from server
+MOODS.moveParticles = null;
 MOODS.motivation = {
 	message: "", //Motivational message in moods page
 	author: ""   //Respective author
@@ -44,6 +45,39 @@ MOODS.init = function() {
 	MOODS.notification.checkPermission();
 	MOODS.notification.checkForNotification();
 }();
+MOODS.loadParticles = function() {
+	particlesJS.load('particles-js-nomove', 'assets/particles_nomove.json', function() {});
+	particlesJS.load('particles-js-move', 'assets/particles_move.json', function() {});
+};
+MOODS.checkParticleEnabler = function( setting = false ) {
+	try {
+		if( setting && MOODS.moveParticles != null ) {
+			if( MOODS.moveParticles ) {
+				document.getElementById( "particles-js-move" ).style.visibility = "visible";
+				document.getElementById( "particles-js-nomove" ).style.visibility = "hidden";
+				$( "#particlesEnabler" ).prop( "checked", true );
+			}
+			else {
+				document.getElementById( "particles-js-move" ).style.visibility = "hidden";
+				document.getElementById( "particles-js-nomove" ).style.visibility = "visible";
+				$( "#particlesEnabler" ).prop( "checked", false );
+			}
+		}
+		else {
+			var enableParticles = $( '#particlesEnabler' ).is( ":checked" );
+			if( enableParticles ) {
+				MOODS.moveParticles = true;
+			}
+			else {
+				MOODS.moveParticles = false;
+			}
+			MOODS.checkParticleEnabler( true );
+		}
+	}
+	catch( error ) {
+		console.log( "Warning in checkParticleEnabler! Method called before HTML element was loaded." );
+	}
+}
 /* CHANGES ICON FOR DATA VIEW/MOODS */
 MOODS.changeStyles = function() {
 	return {
@@ -89,15 +123,14 @@ MOODS.app.config([ '$routeProvider', function ( $routeProvider ) {
 
 /* CONTROLLERS FUNCTIONS */
 MOODS.app.controller( 'MoodController', function () {
-	particlesJS.load('particles-js', 'assets/particles.json', function() {});
 	MOODS.setMoodsPage();
 	MOODS.changeStyles.setDataViewButton();
 	MOODS.changeStyles.enableGreeting();
 	MOODS.currPage = 0;
+	MOODS.checkParticleEnabler( true );
 });
 
 MOODS.app.controller( 'DataViewController', function () {
-	particlesJS.load('particles-js', 'assets/particles.json', function() {});
 	MOODS.initCalendars();
 	MOODS.formGrid(); // default is 7-days
 	MOODS.changeStyles.setMoodsButton();
@@ -106,7 +139,8 @@ MOODS.app.controller( 'DataViewController', function () {
 });
 
 MOODS.app.controller( 'InfoViewController', function() {
-	setTabHandler( MOODS.currPage );
+	MOODS.setTabHandler( MOODS.currPage );
+	MOODS.changeStyles.disableGreeting();
 });
 
 MOODS.init;
