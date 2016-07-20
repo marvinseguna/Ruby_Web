@@ -69,9 +69,9 @@ MOODS.getIconToDisplay = function( mood ) { // h, c, s, a
 }
 
 MOODS.formGrid = function( dateFrom = null, dateTo = null ) { //default is 1-week
-	if( MOODS.users != null ) {
+	if( MOODS.userData.users != null ) {
 		$( "#teamFilter" ).autocomplete({ 
-			source: MOODS.getTeams( MOODS.users )
+			source: MOODS.getTeams( MOODS.userData.users )
 		});
 	}
 	else {
@@ -79,14 +79,10 @@ MOODS.formGrid = function( dateFrom = null, dateTo = null ) { //default is 1-wee
 		return;
 	}
 	
-	var teamFilter = '';
-	if( MOODS.appViewModel !== undefined ){
-		teamFilter = document.getElementById( 'teamFilter' ).value || MOODS.appViewModel.team() || 'CS';
-	}
-	else {
-		teamFilter = document.getElementById( 'teamFilter' ).value || 'CS';
-	}
-	document.getElementById( 'teamFilter' ).value = teamFilter;
+	var teamFilter = document.getElementById( "teamFilter" ).value;
+	if( teamFilter == "" ) teamFilter = MOODS.userData.team;
+	if( teamFilter == "" ) teamFilter = "CS";
+	document.getElementById( "teamFilter" ).value = teamFilter;
 	
 	var data = { dateFrom: dateFrom,  dateTo: dateTo, team: teamFilter }
 	$.getJSON( "/GetMoodData", data )

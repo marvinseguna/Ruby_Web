@@ -1,54 +1,48 @@
-/* ENLARGE INPUT TEXT AS REQUIRED */
 MOODS.setUserInputWidth = function() {
 	var input = document.getElementById( 'user' );
-	input.onkeypress = input.onkeydown = input.onkeyup = function(){
-		setTimeout(function(){
-			var x = document.getElementById( 'user' ).value;
-			
-			if( x.length < 8 ) {
-				document.getElementById( 'user' ).style.width = "" + ( x.length * 25 ).toString() + "px";
-			}
-			else {
-				document.getElementById( 'user' ).style.width = "" + ( x.length * 17 ).toString() + "px";
-			}
+	alert('ere');
+	input.onkeypress = input.onkeydown = input.onkeyup = function() {
+		setTimeout( function() {
+			var userLength = document.getElementById( 'user' ).value.length;
+			var length = ( userLength < 8 ) ? 25 : 17;
+			document.getElementById( 'user' ).style.width = "" + ( userLength * length ).toString() + "px";
 		}, 1);
 	}
-	var x = document.getElementById( 'user' ).value;
-	document.getElementById( 'user' ).style.width = "" + ( x.length * 17 ).toString() + "px";
+	var userLength = document.getElementById( 'user' ).value.length;
+	document.getElementById( 'user' ).style.width = "" + ( userLength * 23 ).toString() + "px";
 };
-/* VALIDATES USER AND TEAM VALUES */
 MOODS.setUserAndTeam = function() {
-	var parseUser = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
-	var user = document.getElementById( "user" ).value;
-	previousTeam = MOODS.appViewModel.team();
-	previousUser = MOODS.appViewModel.user();
-	
-	/* If the values are found for the AppViewModel variables, no changes will be executed from Knockout */
-	MOODS.appViewModel.team('foo');
-	MOODS.appViewModel.user('foo');
-	
-	var parsedUser = parseUser.exec( user );
-	if( parsedUser != null ) {
-		MOODS.appViewModel.team( parsedUser[1] );
-		MOODS.appViewModel.user( parsedUser[2] );
+	try {
+		var user = document.getElementById( "user" ).value;
+		if( user == "" ) throw "No input was provided!";
+		
+		var userRegex = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
+		var parsedUser = userRegex.exec( user );
+		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!"; /* Spaces only are not allowed */
+		if( parsedUser == null ) throw "Error while parsing user provided."
+		if( parsedUser[1] == '' ) throw "Team not provided! Input example: 'TEAM:Name Surname'"
+		
+		MOODS.userData.team = parsedUser[1];
+		MOODS.userData.user = parsedUser[2];
 	}
-	
-	if( MOODS.appViewModel.team() == '' ) {
-		MOODS.appViewModel.team( previousTeam );
+	catch( error ) {
+		alert( error );
+		console.log( error );
 	}
-	if( MOODS.appViewModel.user() == '' ) {
-		MOODS.appViewModel.user( previousUser );
+	finally {
+		document.getElementById( 'user' ).value = MOODS.userData.user;
+		document.getElementById( 'team' ).innerHTML = MOODS.userData.team;
 	}
 }
 /* SUBMITS MOOD TO SERVER */
 MOODS.acceptInput = function( mood ) {
-	if( MOODS.appViewModel.user() == '' || MOODS.appViewModel.user() == 'Full name' || MOODS.appViewModel.team() == '' ) {        // If username/team is not provided -> alert
+	if( MOODS.userData.user == '' || MOODS.userData.user == 'Full name' || MOODS.userData.team == '' ) {        // If username/team is not provided -> alert
 		alert( 'Kindly provide full name (e.g. Joe Smith) and the respective team before selecting mood!' );
-		MOODS.appViewModel.user( "Full name" );
-		MOODS.appViewModel.team( "Team" );
+		document.getElementById( 'user' ).value = "Full name";
+		document.getElementById( 'team' ).innerHTML = "Team";
 	}
 	else {        // Else, add user in cookie & file system
-		var data = { username: MOODS.appViewModel.user(), team: MOODS.appViewModel.team(), mood: mood }
+		var data = { username: MOODS.userData.user, team: MOODS.userData.team, mood: mood }
 		$.getJSON( "/SaveMood", data )
 		.done( function( motivation ) {
 			MOODS.motivation.message = motivation.message;
@@ -66,36 +60,32 @@ MOODS.acceptInput = function( mood ) {
 		});
 	}
 }
-/* APPVIEWMODEL CREATOR */
-MOODS.AppViewModel = function() {
-	this.user = ko.observable( "Full name" );
-	this.team = ko.observable( "Team" );
-}
 MOODS.setupHTMLElements = function() {
 	$( "#user" ).autocomplete({ 
 		minLength: 0,
-		source: MOODS.users,
+		source: MOODS.userData.users,
 		select: function( e, ui ) {
-			MOODS.appViewModel.user( ui.item.value );
+			MOODS.userData.user = ui.item.value;
+			MOODS.setUserInputWidth();
 		}
 	}).focus(function() {
 		$(this).autocomplete("search", $(this).val());
 	});
 	$( "#team" ).autocomplete({
 		minLength: 0,
-		source: MOODS.getTeams( MOODS.users ),
+		source: MOODS.getTeams( MOODS.userData.users ),
 		select: function( e, ui ) {
-			MOODS.appViewModel.team( ui.item.value );
+			MOODS.userData.team = ui.item.value;
 		}
     }).focus(function() {
 		$(this).autocomplete("search", $(this).val());
 	});
 	
-	if( MOODS.appViewModel.user() == 'Full name' ) {        // this implies that cookie is not / was never set!
+	if( MOODS.userData.user == 'Full name' ) {        // this implies that cookie is not / was never set!
 		document.getElementById( 'team' ).setAttribute( "contentEditable", true );
 	}
-	document.getElementById( 'user' ).value = MOODS.appViewModel.user();
-	document.getElementById( 'team' ).innerHTML = MOODS.appViewModel.team();
+	document.getElementById( 'user' ).value = MOODS.userData.user;
+	document.getElementById( 'team' ).innerHTML = MOODS.userData.team;
 	
 	MOODS.setUserInputWidth();
 }
@@ -103,15 +93,12 @@ MOODS.setMoodsPage = function() {
 	$( "#message" ).html( MOODS.motivation.message ).fadeTo( 100, 0.4 );
 	$( "#author" ).html( MOODS.motivation.author ).fadeTo( 100, 0.4 );
 	
-	if( MOODS.users.length == 0 ) {
-		MOODS.appViewModel = new MOODS.AppViewModel();
-		ko.applyBindings( MOODS.appViewModel );
-			
+	if( MOODS.userData.users.length == 0 ) {
 		$.getJSON( "/GetUserInfo" )
 		.done( function( userInfo ) {
-			MOODS.users = userInfo.users;
-			MOODS.appViewModel.user( userInfo.user );
-			MOODS.appViewModel.team( userInfo.team );
+			MOODS.userData.users = userInfo.users;
+			MOODS.userData.user = userInfo.user;
+			MOODS.userData.team = userInfo.team;
 			
 			MOODS.setupHTMLElements();
 		})

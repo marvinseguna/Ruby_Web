@@ -13,8 +13,8 @@
 		
 		<div id="greeting" class="greeting">
 			<p>How are you feeling today 
-			<sub tabindex="0"   id="team" class="team"     data-bind="text: team" onclick="MOODS.highlightSpanText('team')"></sub>
-			<input tabindex="1" id="user" class="username" data-bind="value: user" type="text" spellcheck="false" title="First time: TEAM:Name Surname" onclick="this.setSelectionRange(0, this.value.length)" onfocus="MOODS.setUserInputWidth()" onblur="MOODS.setUserAndTeam()" onchange="MOODS.setUserInputWidth()"></input>
+			<sub tabindex="0" id="team" class="team" onclick="MOODS.highlightSpanText('team')"></sub>
+			<input tabindex="1" id="user" class="username" type="text" spellcheck="false" title="First time: TEAM:Name Surname" onclick="this.setSelectionRange(0, this.value.length)" onblur="MOODS.setUserAndTeam()" onkeyup="MOODS.setUserInputWidth()"></input>
 			?</p>
 		</div>
 	</body>

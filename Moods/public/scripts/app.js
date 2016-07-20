@@ -1,8 +1,12 @@
 /* ALL VARIABLES FOR THE APPLICATION */
-var MOODS = {};    //Main container to reduce global variables use
-MOODS.currPage = 0;    //0=Moods, 1=Grid view
-MOODS.timeInterval = 600000;    //Notification request timeout
-MOODS.users = [];    //All users retrieved from server
+var MOODS = {}; // Main container to reduce global variables use
+MOODS.currPage = 0; // 0 = Moods, 1 = Grid view
+MOODS.timeInterval = 600000; //Notification request timeout
+MOODS.userData = ({ //All users retrieved from server
+	users: [],
+	user: [],
+	team: []
+});    
 MOODS.moveParticles = null;
 MOODS.motivation = {
 	message: "", //Motivational message in moods page
@@ -123,10 +127,11 @@ MOODS.app.config([ '$routeProvider', function ( $routeProvider ) {
 
 /* CONTROLLERS FUNCTIONS */
 MOODS.app.controller( 'MoodController', function () {
-	MOODS.setMoodsPage();
 	MOODS.changeStyles.setDataViewButton();
 	MOODS.changeStyles.enableGreeting();
 	MOODS.currPage = 0;
+	MOODS.setMoodsPage();
+	MOODS.loadParticles();
 	MOODS.checkParticleEnabler( true );
 });
 
