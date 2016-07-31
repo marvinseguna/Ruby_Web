@@ -1,15 +1,7 @@
-MOODS.setUserInputWidth = function() {
-	var input = document.getElementById( 'user' );
-	alert('ere');
-	input.onkeypress = input.onkeydown = input.onkeyup = function() {
-		setTimeout( function() {
-			var userLength = document.getElementById( 'user' ).value.length;
-			var length = ( userLength < 8 ) ? 25 : 17;
-			document.getElementById( 'user' ).style.width = "" + ( userLength * length ).toString() + "px";
-		}, 1);
-	}
-	var userLength = document.getElementById( 'user' ).value.length;
-	document.getElementById( 'user' ).style.width = "" + ( userLength * 23 ).toString() + "px";
+MOODS.setUserInputWidth = function( dropDownSupplied ) { /* when selected, the first letter was being considered only */
+	var userLength = dropDownSupplied ? MOODS.userData.user.length : document.getElementById( 'user' ).value.length;
+	var length = ( userLength < 8 ) ? 23 : 17;
+	document.getElementById( 'user' ).style.width = "" + ( userLength * length ).toString() + "px";
 };
 MOODS.setUserAndTeam = function() {
 	try {
@@ -18,9 +10,9 @@ MOODS.setUserAndTeam = function() {
 		
 		var userRegex = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
 		var parsedUser = userRegex.exec( user );
-		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!"; /* Spaces only are not allowed */
+		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!" /* Spaces only are not allowed */
 		if( parsedUser == null ) throw "Error while parsing user provided."
-		if( parsedUser[1] == '' ) throw "Team not provided! Input example: 'TEAM:Name Surname'"
+		if( parsedUser[1] == '' ) parsedUser[1] = MOODS.userData.team /* No error because tabbing out of an already entered username is still valid */
 		
 		MOODS.userData.team = parsedUser[1];
 		MOODS.userData.user = parsedUser[2];
@@ -32,6 +24,7 @@ MOODS.setUserAndTeam = function() {
 	finally {
 		document.getElementById( 'user' ).value = MOODS.userData.user;
 		document.getElementById( 'team' ).innerHTML = MOODS.userData.team;
+		MOODS.setUserInputWidth( false );
 	}
 }
 /* SUBMITS MOOD TO SERVER */
@@ -66,7 +59,7 @@ MOODS.setupHTMLElements = function() {
 		source: MOODS.userData.users,
 		select: function( e, ui ) {
 			MOODS.userData.user = ui.item.value;
-			MOODS.setUserInputWidth();
+			MOODS.setUserInputWidth( true );
 		}
 	}).focus(function() {
 		$(this).autocomplete("search", $(this).val());
@@ -87,7 +80,7 @@ MOODS.setupHTMLElements = function() {
 	document.getElementById( 'user' ).value = MOODS.userData.user;
 	document.getElementById( 'team' ).innerHTML = MOODS.userData.team;
 	
-	MOODS.setUserInputWidth();
+	MOODS.setUserInputWidth( false );
 }
 MOODS.setMoodsPage = function() {		
 	$( "#message" ).html( MOODS.motivation.message ).fadeTo( 100, 0.4 );

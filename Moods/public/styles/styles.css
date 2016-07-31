@@ -275,11 +275,19 @@ div.ui-datepicker
 	padding-right: 50px;
 	margin-top: -100px;
 }
+/* Particle Enabler CSS - Begin */
 .particlesEnabler {
 	padding-top: 34%;
-	padding-left: 90%;
+	padding-left: 87%;
 	height: 10px;
+	
 }
+input[type="checkbox"]{
+  width: 20px; /*Desired width*/
+  height: 20px; /*Desired height*/
+  cursor: pointer;
+}
+/* Particle Enabler CSS - End */
 p
 {
 	line-height: 24px;
