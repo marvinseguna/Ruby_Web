@@ -13,22 +13,24 @@ MOODS.constructTable = function( moodData ) {
 			userRow.className = ( rows % 2 == 0 ? "evenGridCell" : "oddGridCell" )
 			userRow.innerHTML += ( "<th scope=\"row\" class=\"userCell " + userRow.className + "\">" + user + "</th>" );
 			
-			for( var date in moodData[ user ]) {				
-				if( moodData[ user ].hasOwnProperty( date )) {
-					MOODS.addToHTML( dateRow, timeRow, rows, userRow, date, moodData[ user ][ date ]);
+			var userRowArr = []
+			for( var date in moodData[ user ]) {
+				if( moodData[user].hasOwnProperty( date )) {
+					userRowArr.push( MOODS.addToHTML( dateRow, timeRow, rows, date, moodData[user][ date ] ));
 				}
 			}
+			userRow.innerHTML += userRowArr.join( '' );
 		}
 	}
 }
 
-MOODS.addToHTML = function( dateRow, timeRow, rows, userRow, date, moods ) {
+MOODS.addToHTML = function( dateRow, timeRow, rows, date, moods ) {
 	if( moods == null || moods == '' ) {
 		if( rows == 2) { //processing first record
 			dateRow.innerHTML += "<th class=\"emptyCell\"></th><th class=\"emptyCell\"></th>";
 			timeRow.innerHTML += "<td class=\"emptyCell\"></td><td class=\"emptyCell\"></td>";
 		}
-		userRow.innerHTML += "<td class=\"emptyCell\"></td><td class=\"emptyCell\"></td>";
+		return "<td class=\"emptyCell\"></td><td class=\"emptyCell\"></td>";
 	}
 	else {
 		if( rows == 2) { //processing first record
@@ -39,14 +41,16 @@ MOODS.addToHTML = function( dateRow, timeRow, rows, userRow, date, moods ) {
 			dateRow.innerHTML += ( "<th colspan=\"3\" class=\"dateCell\">" + ( day + "/" + month + "/" + year ) + "</th>" );
 		}
 		
+		var userRowArr = "";
 		Object.keys( moods ).sort().forEach( function( time ) { // to ensure that the times are sorted
 			if( rows == 2) { //processing first record
 				timeRow.innerHTML += ( "<td class=\"timeCell\">" + time + "</td>" )
 			}
 			if( moods.hasOwnProperty( time )) {
-				userRow.innerHTML += MOODS.getIconToDisplay( moods[ time ]);
+				userRowArr += MOODS.getIconToDisplay( moods[ time ]);
 			}
 		});
+		return userRowArr;
 	}
 }
 
@@ -69,32 +73,31 @@ MOODS.getIconToDisplay = function( mood ) { // h, c, s, a
 }
 
 MOODS.formGrid = function( dateFrom = null, dateTo = null ) { //default is 1-week
-	if( MOODS.userData.users != null ) {
+	try {
+		if( MOODS.userData.users == null ) throw "Users were previously not retrieved correctly! Kindly refresh the page.";
+		
 		$( "#teamFilter" ).autocomplete({ 
 			source: MOODS.getTeams( MOODS.userData.users )
 		});
-	}
-	else {
-		alert( "formGrid: users were previously not retrieved correctly! Kindly refresh the page." );
-		return;
-	}
-	
-	var teamFilter = document.getElementById( "teamFilter" ).value;
-	if( teamFilter == "" ) teamFilter = MOODS.userData.team;
-	if( teamFilter == "" ) teamFilter = "CS";
-	document.getElementById( "teamFilter" ).value = teamFilter;
-	
-	var data = { dateFrom: dateFrom,  dateTo: dateTo, team: teamFilter }
-	$.getJSON( "/GetMoodData", data )
-	.done( function( usersInfo ) {
-		document.getElementById( "moodsTable" ).innerHTML = "";
-		if( usersInfo.moodData != null ) {
+		
+		var teamFilter = document.getElementById( "teamFilter" ).value;
+		if( teamFilter == "" ) teamFilter = MOODS.userData.team;
+		if( teamFilter == "" ) teamFilter = "CS";
+		document.getElementById( "teamFilter" ).value = teamFilter;
+		
+		var data = { dateFrom: dateFrom,  dateTo: dateTo, team: teamFilter }
+		$.getJSON( "/GetMoodData", data )
+		.done( function( usersInfo ) {
+			if( usersInfo.moodData == null ) throw "Mood data was not received correctly from server!";
+			
+			document.getElementById( "moodsTable" ).innerHTML = "";
 			MOODS.constructTable( usersInfo.moodData );
-		}
-		else {
-			alert( 'formGrid: Mood data was not received correctly from server!' );
-		}
-	});
+		});
+	}
+	catch( error ) {
+		alert( error );
+		console.log( "formGrid: " + error );
+	}
 }
 
 MOODS.filterMoods = function() {

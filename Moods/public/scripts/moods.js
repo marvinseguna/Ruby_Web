@@ -10,8 +10,8 @@ MOODS.setUserAndTeam = function() {
 		
 		var userRegex = /^([A-Za-z\.]*?):?([A-Za-z\s]*)$/;
 		var parsedUser = userRegex.exec( user );
-		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!" /* Spaces only are not allowed */
-		if( parsedUser == null ) throw "Error while parsing user provided."
+		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!"; /* Spaces only are not allowed */
+		if( parsedUser == null ) throw "Error while parsing user provided.";
 		if( parsedUser[1] == '' ) parsedUser[1] = MOODS.userData.team /* No error because tabbing out of an already entered username is still valid */
 		
 		MOODS.userData.team = parsedUser[1];
