@@ -5,6 +5,7 @@ require 'user_moods_helper'
 require 'messages_helper'
 require 'gcm'
 require 'json'
+require 'set'
 
 set :cookie_options, :expires => Time.now + ( 3600 * 24 * 30 * 12 )        # cookies are valid for 1-day after they are set
 
@@ -20,13 +21,13 @@ get "/" do
 	erb :index
 end
 
-get "/GetUserInfo" do		# Used in beginning
+get "/GetUserInfo" do    # Used in beginning
 	user = ( cookies[ :user ] == nil ? "Full name" : cookies[ :user ] )
 	team = ( cookies[ :team ] == nil ? "Team" : cookies[ :team ] )
 	JSON.generate({ :users => get_users_data, :user => user, :team => team })
 end
 
-get "/SaveMood" do  # used when user selects a mood
+get "/SaveMood" do    # used when user selects a mood
 	username = capitalize_user( params[ 'username' ] )
 	mood = params[ 'mood' ]
 	team = params[ 'team' ].upcase
@@ -36,8 +37,9 @@ get "/SaveMood" do  # used when user selects a mood
 	cookies[ :user ] = username
 	cookies[ :team ] = team
 	
-	unless settings.users.include? username
+	unless settings.users_teams.include? "#{team}:#{username}"
 		create_entry_and_file
+		settings.users_teams.push "#{team}:#{username}"
 	end
 
 	insert_entry mood
@@ -49,7 +51,7 @@ get "/SaveMood" do  # used when user selects a mood
 	JSON.generate({ :message => motivational_msg.message, :author => motivational_msg.author })
 end
 
-get "/GetMoodData" do		# used to retrieve information to show in the data grid
+get "/GetMoodData" do    # used to retrieve information to show in the data grid
 	date_from = params[ 'dateFrom' ]
 	date_to = params[ 'dateTo' ]
 	team = ( params[ 'team' ] == '' ? ( cookies[ :team ] == nil ? 'CS' : cookies[ :team ] ) : params[ 'team' ] )
@@ -63,9 +65,19 @@ get "/GetMoodData" do		# used to retrieve information to show in the data grid
 end
 
 
-get "/GetLastSubmission" do		# used for notification alerts
-	return JSON.generate({ :show => false })		if cookies[ :user ] == nil
+get "/GetLastSubmission" do    # used for notification alerts
+	return JSON.generate({ :show => false })    if cookies[ :user ] == nil
  	JSON.generate({ :show => check_last_submission })
+end
+
+get "/GetParticleEnabler" do    # used to keep last option for particles
+	puts "1: #{cookies[ :move_particles ]}"
+	cookies[ :move_particles ] = false    if cookies[ :move_particles ] == nil
+	puts "2: #{cookies[ :move_particles ]}"
+	puts "parameters: #{params}"
+	cookies[ :move_particles ] = params[ 'particles' ]    if !params.empty?
+	puts "3: #{cookies[ :move_particles ]}"
+	JSON.generate({ :moveParticles => cookies[ :move_particles ] })
 end
 
 # Service Worker method

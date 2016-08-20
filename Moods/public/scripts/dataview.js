@@ -77,7 +77,7 @@ MOODS.formGrid = function( dateFrom = null, dateTo = null ) { //default is 1-wee
 		if( MOODS.userData.users == null ) throw "Users were previously not retrieved correctly! Kindly refresh the page.";
 		
 		$( "#teamFilter" ).autocomplete({ 
-			source: MOODS.getTeams( MOODS.userData.users )
+			source: MOODS.getUniqueTeams( MOODS.userData.users )
 		});
 		
 		var teamFilter = document.getElementById( "teamFilter" ).value;

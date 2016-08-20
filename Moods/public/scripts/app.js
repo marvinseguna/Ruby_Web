@@ -1,13 +1,14 @@
 /* ALL VARIABLES FOR THE APPLICATION */
 var MOODS = {}; // Main container to reduce global variables use
 MOODS.currPage = 0; // 0 = Moods, 1 = Grid view
+MOODS.particlesLoaded = false; // indicates whether the particles were already loaded for the current session
+MOODS.moveParticles = null; // indicates particles status
 MOODS.timeInterval = 600000; //Notification request timeout
 MOODS.userData = ({ //All users retrieved from server
 	users: [],
 	user: [],
 	team: []
 });    
-MOODS.moveParticles = null;
 MOODS.motivation = {
 	message: "", //Motivational message in moods page
 	author: ""   //Respective author
@@ -52,8 +53,20 @@ MOODS.init = function() {
 MOODS.loadParticles = function() {
 	particlesJS.load('particles-js-nomove', 'assets/particles_nomove.json', function() {});
 	particlesJS.load('particles-js-move', 'assets/particles_move.json', function() {});
+	MOODS.particlesLoaded = true;
+	
+	$.getJSON( "/GetParticleEnabler" )
+	.done( function( particleResp ) {
+		if( particleResp.moveParticles == 'true' ) {
+			MOODS.moveParticles = true;
+			MOODS.checkParticleEnabler( true );
+		}
+	})
+	.fail( function( state ) {
+		alert( 'GetParticleEnabler: Error occurred when trying to retrieve cookie!' );
+	});
 };
-MOODS.checkParticleEnabler = function( setting = false ) {
+MOODS.checkParticleEnabler = function( setting = false ) {  // true to force move/disable particles
 	try {
 		if( setting && MOODS.moveParticles != null ) {
 			if( MOODS.moveParticles ) {
@@ -69,12 +82,9 @@ MOODS.checkParticleEnabler = function( setting = false ) {
 		}
 		else {
 			var enableParticles = $( '#particlesEnabler' ).is( ":checked" );
-			if( enableParticles ) {
-				MOODS.moveParticles = true;
-			}
-			else {
-				MOODS.moveParticles = false;
-			}
+			MOODS.moveParticles = enableParticles ? true : false;
+			
+			$.getJSON( "/GetParticleEnabler", { particles: MOODS.moveParticles } );
 			MOODS.checkParticleEnabler( true );
 		}
 	}
@@ -131,8 +141,8 @@ MOODS.app.controller( 'MoodController', function () {
 	MOODS.changeStyles.enableGreeting();
 	MOODS.currPage = 0;
 	MOODS.setMoodsPage();
-	MOODS.loadParticles();
-	MOODS.checkParticleEnabler( true );
+	if( !MOODS.particlesLoaded ) MOODS.loadParticles();
+	if( MOODS.moveParticles ) $( "#particlesEnabler" ).prop( "checked", true );
 });
 
 MOODS.app.controller( 'DataViewController', function () {
@@ -141,11 +151,13 @@ MOODS.app.controller( 'DataViewController', function () {
 	MOODS.changeStyles.setMoodsButton();
 	MOODS.changeStyles.disableGreeting();
 	MOODS.currPage = 1;
+	if( !MOODS.particlesLoaded ) MOODS.loadParticles();
 });
 
 MOODS.app.controller( 'InfoViewController', function() {
 	MOODS.setTabHandler( MOODS.currPage );
 	MOODS.changeStyles.disableGreeting();
+	if( !MOODS.particlesLoaded ) MOODS.loadParticles();
 });
 
 MOODS.init;

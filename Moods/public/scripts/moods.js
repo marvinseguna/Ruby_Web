@@ -1,6 +1,7 @@
-MOODS.setUserInputWidth = function( dropDownSupplied ) { /* when selected, the first letter was being considered only */
+/* USER FUNCTIONS */
+MOODS.setUserInputWidth = function( dropDownSupplied ) { /* true if value was supplied by selecting combo box, false otherwise */
 	var userLength = dropDownSupplied ? MOODS.userData.user.length : document.getElementById( 'user' ).value.length;
-	var length = ( userLength < 8 ) ? 23 : 17;
+	var length = ( userLength < 8 ) ? 23 : 19;
 	document.getElementById( 'user' ).style.width = "" + ( userLength * length ).toString() + "px";
 };
 MOODS.setUserAndTeam = function() {
@@ -12,7 +13,7 @@ MOODS.setUserAndTeam = function() {
 		var parsedUser = userRegex.exec( user );
 		if( parsedUser[0].replace(/\s/g, '') == "" ) throw "No input was provided!"; /* Spaces only are not allowed */
 		if( parsedUser == null ) throw "Error while parsing user provided.";
-		if( parsedUser[1] == '' ) parsedUser[1] = MOODS.userData.team /* No error because tabbing out of an already entered username is still valid */
+		if( parsedUser[1] == '' ) parsedUser[1] = document.getElementById( 'team' ).innerHTML; /* No error because tabbing out of an already entered username is still valid */
 		
 		MOODS.userData.team = parsedUser[1];
 		MOODS.userData.user = parsedUser[2];
@@ -27,31 +28,10 @@ MOODS.setUserAndTeam = function() {
 		MOODS.setUserInputWidth( false );
 	}
 }
-/* SUBMITS MOOD TO SERVER */
-MOODS.acceptInput = function( mood ) {
-	if( MOODS.userData.user == '' || MOODS.userData.user == 'Full name' || MOODS.userData.team == '' ) {        // If username/team is not provided -> alert
-		alert( 'Kindly provide full name (e.g. Joe Smith) and the respective team before selecting mood!' );
-		document.getElementById( 'user' ).value = "Full name";
-		document.getElementById( 'team' ).innerHTML = "Team";
-	}
-	else {        // Else, add user in cookie & file system
-		var data = { username: MOODS.userData.user, team: MOODS.userData.team, mood: mood }
-		$.getJSON( "/SaveMood", data )
-		.done( function( motivation ) {
-			MOODS.motivation.message = motivation.message;
-			MOODS.motivation.author = motivation.author;
-			
-			$( "#message" ).stop( true ).fadeTo( 100, 1 );        //resets animations and removes others in queue
-			$( "#author" ).stop( true ).fadeTo( 100, 1 );
-			$( "#message" ).html( MOODS.motivation.message ).fadeTo( 60000, 0.4 );
-			$( "#author" ).html( MOODS.motivation.author ).fadeTo( 60000, 0.4 );
-			
-			//registerSW();
-		})
-		.fail( function( state ) {
-			alert( 'SaveMood: Error occurred when trying to save the mood / retrieve display message!' );
-		});
-	}
+MOODS.checkNewUser = function( team, user ){
+	var fullUser = team + ":" + user
+	var present = $.inArray( fullUser, MOODS.userData.users );
+	if( present < 0 ) MOODS.userData.users.push( fullUser );
 }
 MOODS.setupHTMLElements = function() {
 	$( "#user" ).autocomplete({ 
@@ -66,7 +46,7 @@ MOODS.setupHTMLElements = function() {
 	});
 	$( "#team" ).autocomplete({
 		minLength: 0,
-		source: MOODS.getTeams( MOODS.userData.users ),
+		source: MOODS.getUniqueTeams( MOODS.userData.users ),
 		select: function( e, ui ) {
 			MOODS.userData.team = ui.item.value;
 		}
@@ -103,8 +83,7 @@ MOODS.setMoodsPage = function() {
 		MOODS.setupHTMLElements();
 	}
 }
-
-MOODS.getTeams = function( users ) {
+MOODS.getUniqueTeams = function( users ) {
 	var teams = users.map( function( user ) {
 		return user.split( ":" )[0];
 	});
@@ -112,6 +91,40 @@ MOODS.getTeams = function( users ) {
 		return teams.indexOf( team ) == pos;
 	});
 	return uniqueTeams;
+}
+
+/* SUBMITS MOOD TO SERVER */
+MOODS.acceptInput = function( mood ) {
+	if( MOODS.userData.user == '' || MOODS.userData.user == 'Full name' || MOODS.userData.team == '' ) {        // If username/team is not provided -> alert
+		alert( 'Kindly provide full name (e.g. Joe Smith) and the respective team before selecting mood!' );
+		document.getElementById( 'user' ).value = "Full name";
+		document.getElementById( 'team' ).innerHTML = "Team";
+	}
+	else {        // Else, add user in cookie & file system
+		var data = { username: MOODS.userData.user, team: MOODS.userData.team, mood: mood }
+		$.getJSON( "/SaveMood", data )
+		.done( function( motivation ) {
+			MOODS.checkNewUser( MOODS.userData.team, MOODS.userData.user );
+			
+			MOODS.motivation.message = motivation.message;
+			MOODS.motivation.author = motivation.author;
+			
+			$( "#message" ).stop( true ).fadeTo( 100, 1 );        //resets animations and removes others in queue
+			$( "#author" ).stop( true ).fadeTo( 100, 1 );
+			$( "#message" ).html( MOODS.motivation.message ).fadeTo( 60000, 0.4 );
+			$( "#author" ).html( MOODS.motivation.author ).fadeTo( 60000, 0.4 );
+			
+			//registerSW();
+		})
+		.fail( function( state ) {
+			alert( 'SaveMood: Error occurred when trying to save the mood / retrieve display message!' );
+		});
+	}
+}
+
+/* PAGE LISTENERS */
+MOODS.userListener = function( e ){
+	if( e.keyCode == 13 ) MOODS.setUserAndTeam();
 }
 
 // Service Worker method

@@ -1,11 +1,26 @@
 def init
-	File.open( 'db/data.dat', 'a+' ){}           if !File.file?( 'db/data.dat' )
-	File.open( 'db/performance.dat', 'a+' ){}    if !File.file?( 'db/performance.dat' )
-	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}    if !File.file?( 'db/messages.dat' ) # write a sample message
+	File.open( 'db/data.dat', 'a+' ){}    if !File.file? 'db/data.dat' 
+	File.open( 'db/messages.dat', 'a+' ){ |f| f.puts '"1","","","0"'}    if !File.file? 'db/messages.dat'    # write a sample message
 	
-	set :dates, IO.readlines( 'db/performance.dat' ).map{ |date| date.chomp }    # saved last 7 dates to improve performance
 	set :users, get_users_data( true )                  # users without teams
 	set :users_teams, get_users_data( false )           # users with teams
+	
+	create_performance_file    if !File.file? 'db/performance.dat'
+	set :dates, IO.readlines( 'db/performance.dat' ).map{ |date| date.chomp }    # saved last 7 dates to improve performance
+end
+def create_performance_file
+	dates = SortedSet.new
+	settings.users_teams.each{ |user_team| 
+		next if user_team.strip.empty?
+		team, user = user_team.split( ':' )
+		IO.readlines( get_user_file_path user, team ).each{ |line|
+			dates.add line.split( ',' ).first
+		}
+	}
+	
+	File.open( 'db/performance.dat', 'a+' ){ |f|
+		dates.to_a.each{ |value| f.write( value + "\n" ) }
+	}
 end
 
 ############################################################################################
@@ -13,7 +28,7 @@ end
 ############################################################################################
 def get_users_data( split_users = false )
 	users_teams = File.read( 'db/data.dat' ).split "\n" 
-	return users_teams        if !split_users
+	return users_teams    if !split_users
 	
 	users_teams.map{ | user_team | user_team.split( ':' )[1] }
 end
@@ -30,19 +45,22 @@ def capitalize_user( user )
 end 
 
 def create_entry_and_file
-	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{cookies[ :team ]}:#{capitalize_user( cookies[ :user ].gsub( '+', ' ' ))}" }		# E.g. CS:Marvin Seguna
+	File.open( "db/data.dat", 'a+' ) { |f| f.puts "#{cookies[:team]}:#{capitalize_user( cookies[:user].gsub( '+', ' ' ))}" }        # E.g. CS:Marvin Seguna
+	puts File.exists?( cookies[:team] )
+	Dir.mkdir( "db/#{cookies[:team]}" )    unless File.exists?( "db/#{cookies[:team]}" )
+	puts 'directory created..'
 	File.new( get_user_file_path, "a+" )
 end
 
 def insert_entry( mood )
 	File.open( get_user_file_path, 'a+' ) { |f| 
-		f.puts "#{Time.now.strftime( "%Y%m%d" )},#{Time.now.strftime( "%H%M" )},#{mood[ 0 ]}"		# E.g. 20160707,1818,h
+		f.puts "#{Time.now.strftime( "%Y%m%d" )},#{Time.now.strftime( "%H%M" )},#{mood[ 0 ]}"        # E.g. 20160707,1818,h
 	}
 end
 
 def update_dates
 	date = Time.now.strftime '%Y%m%d'
-	return if settings.dates.include? date
+	return    if settings.dates.include? date
 	
 	settings.dates.push date
 	File.open( 'db/performance.dat', 'a+' ) { |f| f.puts date }
@@ -53,7 +71,7 @@ end
 ############################################################################################
 def get_time_range( current_time )
 	[ 0..1100, 1101..1500, 1501..2359 ].each{ |time_interval|
-		return time_interval		if time_interval.cover? current_time
+		return time_interval    if time_interval.cover? current_time
 	}
 end
 
@@ -67,7 +85,7 @@ def check_last_submission()
 	user_date = last_submission.split( ',' ).first
 	user_time = get_time_range last_submission.split( ',' )[ 1 ].to_i
 	
-	return false	if user_date == current_date and current_time == user_time
+	return false    if user_date == current_date and current_time == user_time
 	
 	true
 end
@@ -120,7 +138,7 @@ def get_moods( team, date_from = nil, date_to = nil )
 	
 	settings.users_teams.each{ |team_user| 
 		user_team, user = team_user.split( ':' )
-		next if user_team != team
+		next    if user_team != team
 		
 		file = get_user_file_path user, user_team
 		moods[user] = fill_default_moods filter_dates, date_from, date_to
