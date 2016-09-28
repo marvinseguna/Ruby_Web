@@ -136,7 +136,6 @@ MOODS.app.controller( 'DataViewController', function () {
 });
 
 MOODS.app.controller( 'InfoViewController', function() {
-	MOODS.setTabHandler( MOODS.currPage );
 	MOODS.changeStyles.disableGreeting();
 	if( !MOODS.particlesLoaded ) MOODS.loadParticles();
 });
