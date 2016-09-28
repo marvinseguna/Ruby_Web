@@ -6,16 +6,42 @@
 		<div id="particles-js-nomove"/>
 		<div id="particles-js-move" style="visibility:hidden;"/>
 		
-		<div id="tabContainer" class="tabsContainer">
-			<a tabindex="6" href="#/infoview" class="infoTab" data-toggle="tooltip" title="About"><img src="/images/info.png" width="40" height="40" style="float: left" alt="submit"/></a>
-			<div id="upperTab" class="tabs"></div>
-		</div>
-		
 		<div id="greeting" class="greeting">
 			<p>How are you feeling today 
 			<sub tabindex="0" id="team" class="team"></sub>
 			<input tabindex="1" id="user" class="username" type="text" spellcheck="false" title="First time: TEAM:Name Surname" onclick="this.setSelectionRange(0, this.value.length)" onblur="MOODS.setUserAndTeam()" onkeyup="MOODS.setUserInputWidth()" onkeypress="MOODS.userListener(event);"></input>
 			?</p>
 		</div>
+		
+		<ul id="menu" class="mfb-component--br mfb-zoomin" data-mfb-toggle="hover">
+			<li class="mfb-component__wrap">
+				<a href="#" class="mfb-component__button--main">
+					<i class="mfb-component__main-icon--resting ion-chevron-up"></i>
+					<i class="mfb-component__main-icon--active ion-chevron-down"></i>
+				</a>
+				<ul class="mfb-component__list">
+					<li>
+						<a href="#/" data-mfb-label="Home" class="mfb-component__button--child">
+							<i class="mfb-component__child-icon ion-ios-home-outline"></i>
+						</a>
+					</li>
+					<li>
+						<a href="#/dataview" data-mfb-label="Overview" class="mfb-component__button--child">
+							<i class="mfb-component__child-icon ion-android-happy"></i>
+						</a>
+					</li>
+					<li>
+						<a onclick="MOODS.checkParticleEnabler()" data-mfb-label="Particles" class="mfb-component__button--child">
+							<i class="mfb-component__child-icon ion-levels"></i>
+						</a>
+					</li>
+					<li>
+						<a href="#/infoview" data-mfb-label="About" class="mfb-component__button--child">
+							<i class="mfb-component__child-icon ion-information"></i>
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
 	</body>
 </html>

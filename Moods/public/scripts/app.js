@@ -55,7 +55,7 @@ MOODS.loadParticles = function() {
 	particlesJS.load('particles-js-move', 'assets/particles_move.json', function() {});
 	MOODS.particlesLoaded = true;
 	
-	$.getJSON( "/GetParticleEnabler" )
+	$.getJSON( "/GetParticleEnabler", { change: false } )
 	.done( function( particleResp ) {
 		if( particleResp.moveParticles == 'true' ) {
 			MOODS.moveParticles = true;
@@ -72,20 +72,18 @@ MOODS.checkParticleEnabler = function( setting = false ) {  // true to force mov
 			if( MOODS.moveParticles ) {
 				document.getElementById( "particles-js-move" ).style.visibility = "visible";
 				document.getElementById( "particles-js-nomove" ).style.visibility = "hidden";
-				$( "#particlesEnabler" ).prop( "checked", true );
 			}
 			else {
 				document.getElementById( "particles-js-move" ).style.visibility = "hidden";
 				document.getElementById( "particles-js-nomove" ).style.visibility = "visible";
-				$( "#particlesEnabler" ).prop( "checked", false );
 			}
 		}
 		else {
-			var enableParticles = $( '#particlesEnabler' ).is( ":checked" );
-			MOODS.moveParticles = enableParticles ? true : false;
-			
-			$.getJSON( "/GetParticleEnabler", { particles: MOODS.moveParticles } );
-			MOODS.checkParticleEnabler( true );
+			$.getJSON( "/GetParticleEnabler", { change: true } )
+			.done( function( particleResp ) {
+				MOODS.moveParticles = ( particleResp.moveParticles === 'true' );
+				MOODS.checkParticleEnabler( true );
+			});
 		}
 	}
 	catch( error ) {
@@ -95,24 +93,9 @@ MOODS.checkParticleEnabler = function( setting = false ) {  // true to force mov
 /* CHANGES ICON FOR DATA VIEW/MOODS */
 MOODS.changeStyles = function() {
 	return {
-		setUpperTab: function( url, imageSrc ) {
-			var htmlElement = "<a tabindex=\"7\" href=\"#/" + url + "\" class=\"buttonLinks\" data-toggle=\"tooltip\">";
-			htmlElement += "<img src=\"/images/" + imageSrc + ".png\" width=\"40\" height=\"40\" alt=\"submit\"/></a>";
-			document.getElementById( "upperTab" ).innerHTML = htmlElement;
-		},
 		checkIfElementExists: function( elementId ){
 			var exists = document.getElementById( elementId ) == null ? false : true;
 			return exists;
-		},
-		setDataViewButton: function() {
-			MOODS.changeStyles.checkIfElementExists( "upperTab" ) ? 
-				MOODS.changeStyles.setUpperTab( "dataview", "time_machine_shaped" ) : 
-				setTimeout( MOODS.changeStyles.setDataViewButton, 200 );
-		},
-		setMoodsButton: function() {
-			MOODS.changeStyles.checkIfElementExists( "upperTab" ) ? 
-				MOODS.changeStyles.setUpperTab( "", "logo" ) : 
-				setTimeout( MOODS.changeStyles.setMoodsButton, 200 );
 		},
 		disableGreeting: function() {
 			MOODS.changeStyles.checkIfElementExists( "greeting" ) ? 
@@ -137,7 +120,6 @@ MOODS.app.config([ '$routeProvider', function ( $routeProvider ) {
 
 /* CONTROLLERS FUNCTIONS */
 MOODS.app.controller( 'MoodController', function () {
-	MOODS.changeStyles.setDataViewButton();
 	MOODS.changeStyles.enableGreeting();
 	MOODS.currPage = 0;
 	MOODS.setMoodsPage();
@@ -148,7 +130,6 @@ MOODS.app.controller( 'MoodController', function () {
 MOODS.app.controller( 'DataViewController', function () {
 	MOODS.initCalendars();
 	MOODS.formGrid(); // default is 7-days
-	MOODS.changeStyles.setMoodsButton();
 	MOODS.changeStyles.disableGreeting();
 	MOODS.currPage = 1;
 	if( !MOODS.particlesLoaded ) MOODS.loadParticles();
