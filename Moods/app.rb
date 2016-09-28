@@ -71,14 +71,14 @@ get "/GetLastSubmission" do    # used for notification alerts
 end
 
 get "/GetParticleEnabler" do    # used to keep last option for particles
-	puts "1: #{cookies[ :move_particles ]}"
 	return JSON.generate({ :moveParticles => cookies[ :move_particles ] })  if params[ 'change' ] == 'false'
+	
 	if cookies[ :move_particles ] == nil
 		cookies[ :move_particles ] = false
 	else
 		cookies[ :move_particles ] = cookies[ :move_particles ] == "false" ? true : false
 	end
-	puts "2: #{cookies[ :move_particles ]}"
+	
 	JSON.generate({ :moveParticles => cookies[ :move_particles ] })
 end
 
